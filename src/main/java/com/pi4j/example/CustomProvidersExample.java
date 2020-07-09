@@ -52,7 +52,7 @@ import com.pi4j.plugin.mock.provider.spi.MockSpiProvider;
  * @author Robert Savage (<a href="http://www.savagehomeautomation.com">http://www.savagehomeautomation.com</a>)
  * @version $Id: $Id
  */
-public class GettingStartedExample2 {
+public class CustomProvidersExample {
 
     /**
      * <p>main.</p>
