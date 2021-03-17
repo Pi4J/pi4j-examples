@@ -65,7 +65,7 @@ public class CustomProvidersExample {
         class MyCustomADCProvider extends AnalogInputProviderBase implements AnalogInputProvider {
 
             @Override
-            public AnalogInput create(AnalogInputConfig config) throws Exception {
+            public AnalogInput create(AnalogInputConfig config) {
                 return null;
             }
         }
@@ -73,7 +73,7 @@ public class CustomProvidersExample {
         class MyCustomSPIProvider extends SpiProviderBase {
 
             @Override
-            public Spi create(SpiConfig config) throws Exception {
+            public Spi create(SpiConfig config) {
                 return null;
             }
         }
