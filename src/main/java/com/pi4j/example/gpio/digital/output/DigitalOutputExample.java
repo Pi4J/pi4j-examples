@@ -28,10 +28,11 @@ package com.pi4j.example.gpio.digital.output;
  */
 
 import com.pi4j.Pi4J;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputProvider;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.DigitalStateChangeListener;
 import com.pi4j.util.Console;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -75,28 +76,38 @@ public class DigitalOutputExample {
         // (Platforms and Providers) in the class path
         var pi4j = Pi4J.newAutoContext();
 
-        // create a digital output instance using the default digital output provider
-        var output = pi4j.dout().create(DIGITAL_OUTPUT_PIN);
-        output.config().shutdownState(DigitalState.HIGH);
+
+        // create a digital input instance using the default digital input provider
+        // we will use the PULL_DOWN argument to set the pin pull-down resistance on this GPIO pin
+        var config = DigitalOutput.newConfigBuilder(pi4j)
+                .address(DIGITAL_OUTPUT_PIN)
+                .shutdown(DigitalState.HIGH)
+                .build();
+
+        // get a Digital Input I/O provider from the Pi4J context
+        DigitalOutputProvider digitalInputProvider = pi4j.provider("pigpio-digital-output");
+
+        var output = digitalInputProvider.create(config);
+
 
         // setup a digital output listener to listen for any state changes on the digital output
         output.addListener(System.out::println);
 
         // lets invoke some changes on the digital output
         output.state(DigitalState.HIGH)
-              .state(DigitalState.LOW)
-              .state(DigitalState.HIGH)
-              .state(DigitalState.LOW);
+                .state(DigitalState.LOW)
+                .state(DigitalState.HIGH)
+                .state(DigitalState.LOW);
 
         // lets toggle the digital output state a few times
         output.toggle()
-              .toggle()
-              .toggle();
+                .toggle()
+                .toggle();
 
 
         // another friendly method of setting output state
         output.high()
-              .low();
+                .low();
 
         // lets read the digital output state
         System.out.print("CURRENT DIGITAL OUTPUT [" + output + "] STATE IS [");
