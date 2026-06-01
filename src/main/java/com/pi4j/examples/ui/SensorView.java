@@ -71,7 +71,7 @@ public class SensorView {
                 public void run() {
                     int listIndex = 0;
                     for (Sensor sensor : sensors) {
-                        float[] values = new float[sensor.getDescriptor().getValues().size()];
+                        double[] values = new double[sensor.getDescriptor().getValues().size()];
                         sensor.readMeasurement(values);
                         for (SensorDescriptor.Value valueDescriptor : sensor.getDescriptor().getValues()) {
                             listView.set(listIndex, titleCase(valueDescriptor.getKind().name()) + ": " + Math.round(100 * values[valueDescriptor.getIndex()]) / 100f);

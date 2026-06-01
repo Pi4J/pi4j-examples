@@ -6,7 +6,6 @@ import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.drivers.input.KeyPad;
 import com.pi4j.drivers.sensor.Sensor;
-import com.pi4j.drivers.sound.Note;
 import com.pi4j.drivers.sound.SoundDriver;
 import com.pi4j.examples.apps.calculator.Calculator;
 import com.pi4j.examples.games.bricks.Bricks;
@@ -63,7 +62,7 @@ public class DisplayHatDemo {
         }
         if (soundDriver != null) {
             menu.add("Play Demo Sound", () -> {
-                soundDriver.playNotes(103, null, Note.G4, 8, Note.G4, 8, Note.G4, 8, Note.DS4, 6, Note.AS4, 2, Note.G4, 8, Note.DS4, 6, Note.AS4, 2, Note.G4, 16);
+                soundDriver.playNotes("o2l4t120 cdefg2g2 aaaag2 aaaag2 ffffe2e2 ddddc1");
             });
         }
         menu.add("Exit", ListView.EXIT_ACTION);

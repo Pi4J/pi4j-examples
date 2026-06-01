@@ -29,7 +29,7 @@ public class Autodetect {
 
             List<SensorDescriptor.Value> valueDescriptors = sensor.getDescriptor().getValues();
 
-            float[] values = new float[valueDescriptors.size()];
+            double[] values = new double[valueDescriptors.size()];
             sensor.readMeasurement(values);
 
             for (SensorDescriptor.Value valueDescriptor : valueDescriptors) {

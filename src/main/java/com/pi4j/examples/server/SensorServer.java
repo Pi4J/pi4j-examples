@@ -80,7 +80,7 @@ public class SensorServer {
         for (Sensor sensor : sensorList) {
             SensorDescriptor descriptor = sensor.getDescriptor();
             List<SensorDescriptor.Value> valueDescriptors = descriptor.getValues();
-            float[] measurements = new float[valueDescriptors.size()];
+            double[] measurements = new double[valueDescriptors.size()];
             sensor.readMeasurement(measurements);
             for (SensorDescriptor.Value valueDescriptor : valueDescriptors) {
                 sb.append(first ? "\n  " : ",\n  ");
@@ -105,7 +105,7 @@ public class SensorServer {
         for (Sensor sensor : sensorList) {
             SensorDescriptor descriptor = sensor.getDescriptor();
             List<SensorDescriptor.Value> valueDescriptors = descriptor.getValues();
-            float[] measurements = new float[valueDescriptors.size()];
+            double[] measurements = new double[valueDescriptors.size()];
             sensor.readMeasurement(measurements);
             for (SensorDescriptor.Value valueDescriptor : valueDescriptors) {
                 String name = getUniqueName(names, valueDescriptor);
