@@ -1,6 +1,8 @@
 package com.pi4j.examples.games.snake;
 
+import com.pi4j.drivers.display.graphics.Argb32;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
+import com.pi4j.drivers.display.graphics.Graphics;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.io.ListenableOnOffRead;
 import com.pi4j.util.Delay;
@@ -23,6 +25,7 @@ public class Snake {
     private static final int FADE_OUT_TIME = 2000;
 
     private final GraphicsDisplay display;
+    private final Graphics graphics;
     private final GameController controller;
     private final Delay delay = new Delay();
     private final int x0;
@@ -47,6 +50,7 @@ public class Snake {
     public Snake(GraphicsDisplay display, GameController controller) {
         this.display = display;
         this.controller = controller;
+        this.graphics = display.getGraphics();
 
         int displayWidth = display.getWidth();
         int displayHeight = display.getHeight();
@@ -79,8 +83,10 @@ public class Snake {
 
     private void initialize() {
         arena = new Entity[AREA_SIZE][AREA_SIZE];
-        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xffffffff);
-        display.fillRect(x0, y0, scale * AREA_SIZE, scale * AREA_SIZE, 0xff000000);
+        graphics.setColor(Argb32.WHITE);
+        graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
+        graphics.setColor(Argb32.BLACK);
+        graphics.fillRect(x0, y0, scale * AREA_SIZE, scale * AREA_SIZE);
         body.clear();
         length = 1;
 
@@ -96,7 +102,8 @@ public class Snake {
     }
 
     private void renderColor(int x, int y, int color) {
-        display.fillRect(x0 + x * scale, y0 + y * scale, scale, scale, color);
+        graphics.setColor(color);
+        graphics.fillRect(x0 + x * scale, y0 + y * scale, scale, scale);
     }
 
     public void run() {
@@ -117,7 +124,8 @@ public class Snake {
             step();
             delay.materialize();;
         }
-        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xff000000);
+        graphics.setColor(Argb32.BLACK);
+        graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
         for (Map.Entry<ListenableOnOffRead<?>, Consumer<Boolean>> entry : keys.entrySet()) {
             entry.getKey().removeConsumer(entry.getValue());
         }

@@ -1,5 +1,7 @@
 package com.pi4j.examples.games.bricks;
 
+import com.pi4j.drivers.display.graphics.Argb32;
+import com.pi4j.drivers.display.graphics.Graphics;
 import com.pi4j.drivers.display.graphics.GraphicsDisplay;
 import com.pi4j.drivers.input.GameController;
 import com.pi4j.io.ListenableOnOffRead;
@@ -18,6 +20,7 @@ public class Bricks {
     private static final int PADDLE_Y = FIELD_SIZE - PADDLE_HEIGHT * 3 / 2;
 
     private final GraphicsDisplay display;
+    private final Graphics graphics;
     private final GameController controller;
     private final Delay delay = new Delay();
     private final Map<ListenableOnOffRead<?>, Consumer<Boolean>> keys = new HashMap<>();
@@ -44,6 +47,7 @@ public class Bricks {
     public Bricks(GraphicsDisplay display, GameController controller) {
         this.display = display;
         this.controller = controller;
+        this.graphics = display.getGraphics();
         int displayWidth = display.getWidth();
         int displayHeight = display.getHeight();
 
@@ -78,8 +82,10 @@ public class Bricks {
     }
 
     private void initializeBricks() {
-        display.fillRect(0, 0, display.getWidth(), display.getHeight(), 0xffffffff);
-        display.fillRect(x0, y0, scale * FIELD_SIZE, scale * FIELD_SIZE, 0xff000000);
+        graphics.setColor(Argb32.WHITE);
+        graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
+        graphics.setColor(Argb32.BLACK);
+        graphics.fillRect(x0, y0, scale * FIELD_SIZE, scale * FIELD_SIZE);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 setBrick(i, j, true);
@@ -163,11 +169,13 @@ public class Bricks {
     }
 
     private void renderPaddle(boolean on) {
-        display.fillRect(x0 + paddleX * scale, y0 + PADDLE_Y * scale,  PADDLE_WIDTH * scale, PADDLE_HEIGHT * scale, on ? 0x888888 : 0);
+        graphics.setColor(on ? 0xff888888 : Argb32.BLACK);
+        graphics.fillRect(x0 + paddleX * scale, y0 + PADDLE_Y * scale,  PADDLE_WIDTH * scale, PADDLE_HEIGHT * scale);
     }
 
     private void renderBall(boolean on) {
-        display.fillRect(Math.round(x0 + ballX * scale), y0 + ballY * scale, BALL_SIZE * scale , BALL_SIZE * scale, on ? 0x888888 : 0);
+        graphics.setColor(on ? 0xff888888 : Argb32.BLACK);
+        graphics.fillRect(Math.round(x0 + ballX * scale), y0 + ballY * scale, BALL_SIZE * scale , BALL_SIZE * scale);
     }
 
 
@@ -199,11 +207,11 @@ public class Bricks {
 
     private void setBrick(int x, int y, boolean alive) {
         bricks[x][y] = alive;
-        display.fillRect(
+        graphics.setColor(alive ? (y == 0 ? 0xffff8888 : y == 1 ? 0xffff8888 : 0xff88ff88) : 0);
+        graphics.fillRect(
             x0 + 16 * x * scale + 1,
             y0 + 8 * (y + 1) * scale + 1,
             14 * scale,
-            6 * scale,
-            alive ? (y == 0 ? 0xffff8888 : y == 1 ? 0xffff8888 : 0xff88ff88) : 0);
+            6 * scale);
     }
 }
