@@ -29,15 +29,12 @@
 
 package com.pi4j.devices.pca9685;
 
-//private static final int MCP4725_DEFAULT_ADDRESS = 0x62;
-
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
-import com.pi4j.io.i2c.I2CProvider;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +55,6 @@ public class PCA9685 {
     private int OEPinNum = 0;
     private final DigitalInput OE = null;
 
-    private I2CProvider i2CProvider = null;
     private final I2C tempDeviceReset = null;
     private I2C tempDeviceAddr1 = null;
     private I2C tempDeviceAddr2 = null;
@@ -82,8 +78,6 @@ public class PCA9685 {
         System.setProperty("org.slf4j.simpleLogger.log." + PCA9685.class.getName(), this.traceLevel);
         this.logger = LoggerFactory.getLogger(PCA9685.class);
         this.logger.trace(">>> Initializing the chip");
-        // possible providers left as comment
-        i2CProvider = this.pi4j.provider("linuxfs-i2c");   // linuxfs-i2c  FFMI2CProviderImpl
 
 
         // create i2c device with new address
@@ -201,13 +195,12 @@ public class PCA9685 {
         String formattedString = String.format(">>> setSubAddr2 DevAddr %x  subAddr %x", devAddr, subAddress);
         this.logger.trace(formattedString);
         if (tempDeviceAddr2 == null) {
-            I2CProvider i2CProvider = this.pi4j.provider("linuxfs-i2c");
-            I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
+             I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
                 .id("pca9685SetAddr2_" + subAddress)
                 .bus(this.bus)
                 .device(devAddr) //Pca9685Declares.CONFIG_ADDRESS)
                 .build();
-            tempDeviceAddr2 = i2CProvider.create(i2cConfig);
+            tempDeviceAddr2 = pi4j.create(i2cConfig);
         }
         // Program subaddr1 to Usersupplied value.
         tempDeviceAddr2.writeRegister(PCA9685Declares.SUBADR2, (subAddress << 1));
@@ -221,13 +214,12 @@ public class PCA9685 {
         String formattedString = String.format(">>> setSubAddr3 DevAddr %x  subAddr %x", devAddr, subAddress);
         this.logger.trace(formattedString);
         if (tempDeviceAddr3 == null) {
-            I2CProvider i2CProvider = this.pi4j.provider("linuxfs-i2c");
             I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
                 .id("pca9685SetAddr3_" + subAddress)
                 .bus(this.bus)
                 .device(devAddr) //Pca9685Declares.CONFIG_ADDRESS)
                 .build();
-            tempDeviceAddr3 = i2CProvider.create(i2cConfig);
+            tempDeviceAddr3 = pi4j.create(i2cConfig);
         }
         // Program subaddr1 to Usersupplied value.
         tempDeviceAddr3.writeRegister(PCA9685Declares.SUBADR3, (subAddress << 1));
@@ -271,13 +263,12 @@ public class PCA9685 {
         this.logger.trace(formattedString);
         I2C tempDeviceOn = this.device; //null;
         if (tempDeviceOn == null) {
-            I2CProvider i2CProvider = this.pi4j.provider("linuxfs-i2c");
             I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
                 .id("setLedOn_" + devAddr + "_" + ledNum)
                 .bus(this.bus)
                 .device(devAddr) //Pca9685Declares.CONFIG_ADDRESS)
                 .build();
-            //  tempDeviceOn = i2CProvider.create(i2cConfig);
+            //  tempDeviceOn = pi4j.create(i2cConfig);
         }
         byte[] data = new byte[4];
         data[0] = (byte) (ledOn & 0x00ff);

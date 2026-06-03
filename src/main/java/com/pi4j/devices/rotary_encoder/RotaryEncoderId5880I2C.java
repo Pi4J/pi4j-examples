@@ -39,7 +39,6 @@ import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
-import com.pi4j.io.i2c.I2CProvider;
 import com.pi4j.util.Console;
 
 import static java.util.Arrays.fill;
@@ -86,7 +85,6 @@ public class RotaryEncoderId5880I2C {
         }
         // Initialize I2C
         console.println("Initializing the encoder via I2C");
-        I2CProvider i2CProvider = pi4j.provider("linuxfs-i2c");
         I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
             .id("RotartyEncoder")
             .bus(I2C_BUS)
@@ -97,7 +95,7 @@ public class RotaryEncoderId5880I2C {
             .pull(PullResistance.PULL_UP);
         DigitalInput intrp = pi4j.create(inputCfg);
 
-        I2C rotary = i2CProvider.create(i2cConfig);
+        I2C rotary = pi4j.create(i2cConfig);
 
         // validate HW revision
 
