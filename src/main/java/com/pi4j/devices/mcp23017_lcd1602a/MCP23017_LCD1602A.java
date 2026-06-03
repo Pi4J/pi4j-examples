@@ -389,7 +389,6 @@ public class MCP23017_LCD1602A extends LCD1602A {
             .device(address)
             .id(id + " " + name)
             .name(name)
-            .provider("linuxfs-i2c")
             .build();
         this.mcpDev = this.pi4j.create(i2cDeviceConfig);
         this.logger.trace("<<< Exit:createI2cDevice  ");
