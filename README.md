@@ -1,24 +1,7 @@
-Pi4J :: Java I/O Library for Raspberry Pi :: Devices
+Pi4J :: Java I/O Library for Raspberry Pi :: Examples
 ====================================================
 
-Collection of devices implemented for use with Pi4J V2.
-
-```text
-__  __ _               _   _          
-|  \/  (_)__ _ _ _ __ _| |_(_)___ _ _  
-| |\/| | / _` | '_/ _` |  _| / _ \ ' \
-|_|  |_|_\__, |_| \__,_|\__|_\___/_||_|
-| |_ ___ |___/                         
-|  _/ _ \                              
-\__\___/ _
-|   \ _ _(_)_ _____ _ _ ___            
-| |) | '_| \ V / -_) '_(_-<            
-|___/|_| |_|\_/\___|_| /__/
-```
-
-We began major changes in the Device Examples.  We are migrating to drivers
-that separate the device driver code from external dependencies. These examples will
-be modified one by one. 
+Collection of examples implemented for use with Pi4J V4 and the drivers library.
 
 Migrated devices are located in https://github.com/Pi4J/pi4j-drivers/tree/main
 
