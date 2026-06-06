@@ -65,7 +65,6 @@ package com.pi4j.devices.is31Fl37Matrix;/*
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
@@ -100,7 +99,10 @@ public class Is31Fl37_matrix_app {
     private DigitalInput monitorPin = null;
     private Console console;
 
-    //GpioUtil gpioUtil;
+
+    private static final int ID_VALUE_MSK_BME = 0x60;
+    private static final int ID_VALUE_MSK_BMP = 0x59;
+
 
 
     public Is31Fl37_matrix_app() {
@@ -414,9 +416,9 @@ public class Is31Fl37_matrix_app {
         i2c.writeThenRead(reg, wrData);
         pi4j.shutdown(i2c);
         byte id = wrData[0];
-        if (id == BMP280Declares.idValueMskBMP) {
+        if (id == ID_VALUE_MSK_BMP) {
             return id;
-        } else if (id == BMP280Declares.idValueMskBME) {
+        } else if (id == ID_VALUE_MSK_BME) {
             return id;
         } else {
             console.println("Not BMP280 nor BME280,  chip ID read  {}", id);

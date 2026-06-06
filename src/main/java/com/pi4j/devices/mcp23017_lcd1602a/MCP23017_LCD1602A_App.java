@@ -38,12 +38,14 @@ package com.pi4j.devices.mcp23017_lcd1602a;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.io.exception.IOException;
 import com.pi4j.util.Console;
 
 public class MCP23017_LCD1602A_App {
 
+    public static final int DEFAULT_ADDRESS = 0x77;
+
+    public static final int DEFAULT_BUS = 0x1;
 
     public static void main(String[] args) throws InterruptedException, IOException {
         var console = new Console();
@@ -57,8 +59,8 @@ public class MCP23017_LCD1602A_App {
         String lineTwo = "";
         int lineTwoOffset = 0;
 
-        int busNum = BMP280Declares.DEFAULT_BUS;
-        int address = BMP280Declares.DEFAULT_ADDRESS;
+        int busNum = DEFAULT_BUS;
+        int address = DEFAULT_ADDRESS;
 
         // params for shift register, HD44780U_interface
         int OEPinNum = 0xff;
