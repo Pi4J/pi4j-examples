@@ -33,10 +33,9 @@ P7 D7
 2. cd target/distribution
 3. sudo ./runPCF8574A_LCD1602A.sh parms........
 
-sudo ./runPCF8574A_LCD1602A.sh -b 0x01 -a 0x27 -t trace -line1 aBc -line2 XyZ
+sudo ./runPCF8574A_LCD1602A.sh -b 0x01 -a 0x27  -line1 aBc -line2 XyZ
 
-Clears display, Line1 begins in fourth position, line2 begins in second position
-sudo ./runPCF8574A_LCD1602A.sh -b 0x01 -a 0x27 -clearLCD -t trace -line1 aaaaaa -line1Offset 4 -line2 zzzzzz
--line2Offset 2
+Clears display, Line1 begins in fourth position, line2 begins in second position  then shift (scroll) left 2
+sudo ./runPCF8574A_LCD1602A.sh -b 0x01 -a 0x27 -clearLCD -line1 aaaaaa -line1Offset 4 -line2 zzzzzz -shiftL 2 -line2Offset 2  -shiftR 4
 
 Param -shiftL 2 shift both lines 2 positions to left

@@ -38,7 +38,9 @@ package com.pi4j.devices.pcf8574a_lcd1602a;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
+import com.pi4j.drivers.display.character.hd44780.Hd44780Driver;
 import com.pi4j.io.exception.IOException;
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.util.Console;
 
 public class PCF8574A_App_LCD1602A {
@@ -50,9 +52,8 @@ public class PCF8574A_App_LCD1602A {
         var console = new Console();
         Context pi4j = Pi4J.newAutoContext();
         boolean clearLCD = false;
-        int rsPinNum = 0xff;
-        int enPinNum = 0xff;
         int shiftLeftCount = 0;
+        int shiftRightCount = 0;
         String lineOne = "";
         int lineOneOffset = 0;
         String lineTwo = "";
@@ -61,24 +62,14 @@ public class PCF8574A_App_LCD1602A {
         int busNum = DEFAULT_BUS;
         int address = DEFAULT_ADDRESS;
 
-        // params for shift register, HD44780U_interface
-        int OEPinNum = 0xff;
-        int STCPPinNum = 0xff;
-        int SHCPPinNum = 0xff;
-        int MRPinNum = 0xff;
-        int DSPinNum = 0xff;
 
-        byte registerData = 0;
 
 
         console.title("<-- The Pi4J V2 Project Extension  -->", "HD44780U_App");
         String helpString = " parms: HD44780U   -b hex value bus    -a hex value address -t trace \n  " +
             "  -line1 LcdString,-line1Offset offset ," +
-            " -line2 LcdString, -line2Offset offset, -shiftL left shift -clearLCD  \n" +
-            "-t  trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" \n " +
-            " or \"off\"  Default \"info\"";
+            " -line2 LcdString, -line2Offset offset, -shiftL left shift -shiftR right shift -clearLCD  \n" ;
 
-        String traceLevel = "info";
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
             if (o.contentEquals("-b")) { // bus
@@ -109,18 +100,12 @@ public class PCF8574A_App_LCD1602A {
                 String a = args[i + 1];
                 shiftLeftCount = Integer.parseInt(a);
                 i++;
-            } else if (o.contentEquals("-clearLCD")) {
-                clearLCD = true;
-            } else if (o.contentEquals("-t")) {
+            }else if (o.contentEquals("-shiftR")) {
                 String a = args[i + 1];
+                shiftRightCount = Integer.parseInt(a);
                 i++;
-                traceLevel = a;
-                if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
-                    console.println("Changing trace level to : " + traceLevel);
-                } else {
-                    console.println("Changing trace level invalid  : " + traceLevel);
-                    System.exit(41);
-                }
+            }  else if (o.contentEquals("-clearLCD")) {
+                clearLCD = true;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(41);
@@ -132,37 +117,63 @@ public class PCF8574A_App_LCD1602A {
         }
 
 
-        short pinCount = 8;
         console.println("----------------------------------------------------------");
         console.println("PI4J PROVIDERS");
         console.println("----------------------------------------------------------");
         pi4j.providers().describe().print(System.out);
-        System.out.println("----------------------------------------------------------");
+        console.println("----------------------------------------------------------");
 
-        PCF8574A_LCD1602A dispObj = new PCF8574A_LCD1602A(pi4j, console, traceLevel, busNum, address);
+        I2C pcfDev = createI2cDevice(pi4j, busNum, address);
 
+        Hd44780Driver pcfDrv =  Hd44780Driver.withPcf8574Connection(pcfDev, 16, 2 );
+
+        pcfDrv.setBacklightEnabled(true);
+        pcfDrv.clear();
+        pcfDrv.setBlinkingEnabled(true);
+        pcfDrv.setCursorEnabled(true);
+        pcfDrv.clear ();
 
         if (lineOne.length() > 0) {
-            dispObj.sendStringLineX(lineOne, 1, lineOneOffset);
-        }
-
-
-        if (lineTwo.length() > 0) {
-            dispObj.sendStringLineX(lineTwo, 2, lineTwoOffset);
+            pcfDrv.setCursorPosition(lineOneOffset, 0);
+            pcfDrv.write(lineOne);
         }
 
         Thread.sleep(5000);
 
-        dispObj.shiftLeft(shiftLeftCount);
+        if (lineTwo.length() > 0) {
+            pcfDrv.setCursorPosition(lineTwoOffset, 1) ;
+            pcfDrv.write(lineTwo);
+        }
+
+        Thread.sleep(5000);
+
+        for (int s = 0 ; s < shiftRightCount ; s++) {
+            pcfDrv.scrollRight();
+        }
+        Thread.sleep(5000);
+        for (int s = 0 ; s < shiftLeftCount ; s++) {
+            pcfDrv.scrollLeft();
+        }
         Thread.sleep(5000);
 
         if (clearLCD) {
-            dispObj.clearDisplay();
+            pcfDrv.clear();
         }
         Thread.sleep(5000);
-        // dispObj.sendStringLineX("HelloWorld" , 1, 5);
 
+      }
+
+
+    private static I2C createI2cDevice(Context pi4j, int bus, int address) {
+        String id = String.format("0X%02x: ", bus);
+        String name = String.format("0X%02x: ", address);
+        var i2cDeviceConfig = I2C.newConfigBuilder(pi4j)
+            .bus(bus)
+            .device(address)
+            .id(id + " " + name)
+            .name(name)
+            .build();
+        return  pi4j.create(i2cDeviceConfig);
     }
-
 
 }
