@@ -1,45 +1,7 @@
 Pi4J :: Java I/O Library for Raspberry Pi :: Examples
 ====================================================
 
-<<<<<<< Updated upstream
-Collection of examples implemented for use with Pi4J V4 and the drivers library.
-=======
-Collection of devices implemented for use with Pi4J V2.
-
-```text
-__  __ _               _   _          
-|  \/  (_)__ _ _ _ __ _| |_(_)___ _ _  
-| |\/| | / _` | '_/ _` |  _| / _ \ ' \
-|_|  |_|_\__, |_| \__,_|\__|_\___/_||_|
-| |_ ___ |___/                         
-|  _/ _ \                              
-\__\___/ _
-|   \ _ _(_)_ _____ _ _ ___            
-| |) | '_| \ V / -_) '_(_-<            
-|___/|_| |_|\_/\___|_| /__/
-```
-
-We began major changes in the Device Examples.  We are migrating to drivers
-that separate the device driver code from external dependencies. These examples will
-be modified one by one. 
-For driver project dependency details see https://www.pi4j.com/drivers/
-
->>>>>>> Stashed changes
-
-Migrated devices are located in https://github.com/Pi4J/pi4j-drivers/tree/main
-
-Project by Tom Aarts.
-```text
-Note: Second tag captures code that works with pi4j 2.x.x and java21.
-Followon work will use java24 and new providers.
-```
-
-```text
-Note: This repository has a tag identifying the code level that works with
-2.4.0-SNAPSHOT.   Commits newer than this tag are migrations to the 
-2.6.0-SNAPSHOT. These commits may contain  code using providers and/or Pi4J-V2
-interfaces not available in prior SNAPSHOTs.. 
-```
+Various examples demonstrating the use of Pi4J core and/or drivers library.
 
 "Generic" Examples:
 
@@ -86,11 +48,8 @@ The following table the currently supported devices within this project:
 (1): This package uses code within this repo and Pi4J \
 (2): Requires 2.2.2-SNAPSHOT of Pi4j that supports i2c multibyte write/restart \
 
-
-
-
-
 ### GPIO monitor
+
 The following is valid on all pre Pi5 SOCs.  Not valid on Pi5 SOCs.
 This repository includes two Python scripts to monitor GPIO pin states in real-time on a Raspberry Pi. \
 **Note**: These scripts use the pigpio library, which is currently incompatible with the Raspberry Pi 5.
