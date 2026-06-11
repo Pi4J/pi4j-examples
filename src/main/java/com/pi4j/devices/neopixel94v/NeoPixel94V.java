@@ -207,7 +207,7 @@ public class NeoPixel94V extends Component {
         Scanner scan = new Scanner(System.in);
 
         this.console.println("Hit any key to continue");
-        String foo = scan.next();
+        String foo = scan.nextLine() ;
 
         return (rval);
     }
