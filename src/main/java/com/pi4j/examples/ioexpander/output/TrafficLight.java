@@ -1,4 +1,4 @@
-package com.pi4j.examples.ioexpander.ouput;
+package com.pi4j.examples.ioexpander.output;
 
 import com.pi4j.io.OnOffWrite;
 
