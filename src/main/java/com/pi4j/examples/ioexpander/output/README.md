@@ -137,3 +137,5 @@ If you enjoyed this example, consider trying the following:
   this can be done with more IO Expanders or by utilizing more pins.
 
 - Implement an error state that shows a yellow blinking signal
+
+- Use this on your model railroad or lego city and send us links & pictures! :) 
