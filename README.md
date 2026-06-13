@@ -7,7 +7,7 @@ Various examples demonstrating the use of Pi4J core and/or drivers library.
 
 These examples demonstrate various aspects of the Pi4J core and driver libraries:
 
-- [Traffic Lights](src/main/java/com/pi4j/examples/traffic_lights/): Using IO Expanders for more output options 
+- [Traffic Lights](src/main/java/com/pi4j/examples/ioexpander/output/): Using IO Expanders for more output options 
 - [I2C Sensor Autodetect Program](src/main/java/com/pi4j/examples/sensor/autodetect/)
 
 ## Device Examples
