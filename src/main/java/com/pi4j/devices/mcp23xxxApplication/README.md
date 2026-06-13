@@ -198,8 +198,7 @@ int_ena':'no'}}}"
 + "{'pin4':{'appName':'input','action':'reflect','chipName':'23008#1','gpioNumLED':'dio22'}} } },"
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-The current usage of PIGPIO prevents the following test. A single application can access the pigpio libraries at one
-time
+
 Monitor pin 3
 sudo ./runMcp23008PinMonitor.sh -q 9548#1 -r 3 -p pin0 -c 23008#1 -g 27 -i on -z "{{'gpio27':{'name':'InterruptDetect','
 dir':'in','pull':up'}}}"  -m "{{'pin0':{'dir':'out','int_ena':'no'}},{'pin1':{'dir':'out','int_ena':'no'}},{'pin2':

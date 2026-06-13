@@ -37,11 +37,11 @@
 package com.pi4j.devices.lcd1602a;
 
 
-//import com.pi4j.context.Context;
 
 import com.pi4j.context.Context;
 import com.pi4j.util.Console;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +66,17 @@ public abstract class LCD1602A {
 
     }
 
+    protected LCD1602A(Context pi4j, Console console, boolean clearIt) {
+        super();
+        this.console = console;
+        this.pi4j = pi4j;
+        this.clearDisplay = clearIt;
+        this.traceLevel = "info";
+        this.logger = LoggerFactory.getLogger(LCD1602A.class);
+
+
+    }
+
 
     protected void init() {
         this.logger.trace(">>> Enter: init");
@@ -84,6 +95,7 @@ public abstract class LCD1602A {
 
     public void clearDisplay() {
         this.logger.trace(">>> Enter: clearDisplay   ");
+
         this.sendCommand(LCD1602A_Declares.clearDispCMD);
         this.sendCommand(LCD1602A_Declares.returnHomeCMD);
         this.logger.trace("<<< Exit: clearDisplay   ");
@@ -97,6 +109,7 @@ public abstract class LCD1602A {
     public void sendStringLineX(String str, int line, int offset) {
         this.logger.trace(">>> Enter: sendStringLineOne   : " + str + "    line : " + line + "  Offset  : " + offset);
         char[] chars = str.toCharArray();
+
         this.sendCommand(LCD1602A_Declares.setDDRAMCMD | (0x40 * (line - 1)) | offset);
         for (int i = 0; i < chars.length; i++) {
             this.sendChar(chars[i]);

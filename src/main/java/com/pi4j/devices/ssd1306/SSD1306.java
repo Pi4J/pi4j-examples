@@ -74,7 +74,6 @@ After VCC become stable, send command AFh for display ON.
 
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.util.Console;
@@ -117,8 +116,8 @@ public class SSD1306 {
 
     protected Console console = null;
 
-    protected int busNum = BMP280Declares.DEFAULT_BUS;
-    protected int address = BMP280Declares.DEFAULT_ADDRESS;
+    protected int busNum ;
+    protected int address ;
 
 
     /**

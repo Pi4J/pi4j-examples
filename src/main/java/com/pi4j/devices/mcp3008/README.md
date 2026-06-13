@@ -33,9 +33,9 @@ sudo ./runMcp3008.sh -vref 5.0
 
 To monitor only pin 0
 sudo ./runMcp3008.sh -p 0x0
-
-Change the logging detail to 'trace' vref voltage of 3.3
-sudo ./runMcp3008.sh -p 0x0 -t trace -vref 3.3
+ 
+vref voltage of 3.3
+sudo ./runMcp3008.sh -p 0x0  -vref 3.3
 
 chip select 0
 ./runMcp3008.sh -p 0x0 -t trace -vref 3.3 -c 0x00
@@ -47,7 +47,7 @@ Use ChipSelect 1
 sudo ./runMcp3008.sh -p 0x0 -c 0x01
 
 sudo ./runMcp3008.sh -p 0x0 -c 0x00
-INFO com.pi4j.devices.mcp3008.MCP3008 - Channel : 0 Bytes read : 3 Value : 1023
+INFO MCP3008 - Channel : 0 Bytes read : 3 Value : 1023
 
 sudo ./runMcp3008.sh -p 0x01
-INFO com.pi4j.devices.mcp3008.MCP3008 - Channel : 1 Bytes read : 3 Value : 647
+INFO MCP3008 - Channel : 1 Bytes read : 3 Value : 647

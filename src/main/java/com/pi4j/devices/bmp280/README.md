@@ -10,8 +10,6 @@ as parms. Or modify the BMP280I2cExample program to use your specific bus and de
 
 The SPI example assumes SPI bus 0, ChipSelect 0.
 
-The program uses org.slf4j.simple Class SimpleLogger as suggested by the Pi4j_V2 documentation. Consult that logger
-class documentation to understand its various logging options.
 
 The I2C connection functions as written in the Phillips spec.
 
@@ -36,8 +34,7 @@ Will create the BMP280 device to create a BMP280Device instance Call the various
 defined in the interface. 
 
 No parameters are required. However, if 'any' parameter value is to be supplied:
-parms: -b hex value bus -a hex value address -t trace  
-trace values : "trace", "debug", "info", "warn", "error" or "off"  Default "info"
+parms: -b hex value bus -a hex value address 
 
 The file BMP280.pdf documents a method of connecting an Adafruit BMP280 to a Pi.
 

@@ -48,9 +48,7 @@ public class MCP4725_App {
 
         Context pi4j = Pi4J.newAutoContext();
 
-/*        var pi4j = Pi4J.newContextBuilder().add(
-                linuxfs-i2cProvider.newInstance()).build();
-*/
+
 
 
         final Console console = new Console();

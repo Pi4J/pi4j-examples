@@ -33,8 +33,13 @@ package com.pi4j.devices.bmp280;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
+import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
+import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiBus;
+import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
+
+import java.text.DecimalFormat;
 
 
 public class BMP280SpiExample {
@@ -49,10 +54,12 @@ public class BMP280SpiExample {
      *             otherwise provider setup is used
      * @throws java.lang.Exception if any.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
 
         int chipSelect = 0;
         SpiBus spiBus = SpiBus.BUS_0;
+        Context pi4j = Pi4J.newAutoContext();
 
 
         // ------------------------------------------------------------
@@ -67,7 +74,6 @@ public class BMP280SpiExample {
         // extensions found in the application's classpath which
         // may include 'Platforms' and 'I/O Providers'
 
-        Context pi4j = Pi4J.newAutoContext();
 
         // print installed providers
         System.out.println("----------------------------------------------------------");
@@ -83,22 +89,10 @@ public class BMP280SpiExample {
         console.print("==============================================================");
 
 
-        String helpString = " parms:   -t trace      \n " +
-            " \n trace values : \"trace\", \"debug\", \"info\", \"warn\", \"error\" or \"off\"  Default \"info\"";
-        String traceLevel = "info";
-        for (int i = 0; i < args.length; i++) {
+        String helpString = " parms:  NONE      \n " ;
+         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if (o.contentEquals("-t")) { // device address
-                String a = args[i + 1];
-                i++;
-                traceLevel = a;
-                if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
-                    console.println("Changing trace level to : " + traceLevel);
-                } else {
-                    console.println("Changing trace level invalid  : " + traceLevel);
-                    System.exit(40);
-                }
-            } else if (o.contentEquals("-h")) {
+            if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
             } else {
@@ -108,32 +102,53 @@ public class BMP280SpiExample {
             }
         }
 
-        var bmpDev = new BMP280DeviceSPI(pi4j, console, spiBus, chipSelect, traceLevel);
+        Spi spiDev = createSPIDevice(pi4j, spiBus, chipSelect);
+
+        Bmx280Driver bmpDev = new Bmx280Driver(spiDev);
 
 
-        bmpDev.initSensor();
+
+        bmpDev.reset();
+
+        DecimalFormat df = new DecimalFormat("0.###");
+
+        Bmx280Driver.Measurement measurement = bmpDev.readMeasurement();
+
 
         console.println("  Setup ----------------------------------------------------------");
 
+        console.println(" Temperature C = " + df.format(measurement.getTemperature()) );
 
-        double reading1 = bmpDev.temperatureC();
-        console.println(" Temperatue C = " + reading1);
+        console.println(" Temperature F = " +  df.format(measurement.getTemperature()  * 1.8 + 32)  );
 
-        double reading2 = bmpDev.temperatureF();
-        console.println(" Temperatue F = " + reading2);
+        console.println(" Pressure Pa = " + df.format(measurement.getPressure()));
 
-        double press1 = bmpDev.pressurePa();
-        console.println(" Pressure Pa = " + press1);
+        console.println(" Pressure mbar = " + df.format(measurement.getPressure() / 100));
 
-        double press2 = bmpDev.pressureIn();
-        console.println(" Pressure InHg = " + press2);
+        console.println(" Pressure InHg = " + df.format(measurement.getPressure() / 3386));
 
-        double press3 = bmpDev.pressureMb();
-        console.println(" Pressure mb = " + press3);
-
+        console.println("  Dev Spi detail    SpiBus : " + spiBus + "  chipSelect : " + chipSelect);
 
         // Shutdown Pi4J
         pi4j.shutdown();
     }
 
+/**
+ * Use the state from the Sensor config object and the state pi4j to create
+ * a BMP280 device instance
+ */
+private static  Spi createSPIDevice(Context pi4j, SpiBus spiBus, int channel) {
+    var spiConfig = Spi.newConfigBuilder(pi4j)
+        .id("SPI" + spiBus + "_BMP280")
+        .name("D/A converter")
+        .bus(spiBus)
+        .channel(channel)
+        //1 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+        //b  b  b  b  b  b  R  T  n  n  n  n  W  A u2 u1 u0 p2 p1 p0  m  m
+        // .flags(0b0000000000000000100000L)  // MODE0, ux GPIO not used for chip select
+        .baud(Spi.DEFAULT_BAUD)    // Max 10MHz
+        .mode(SpiMode.MODE_0)
+        .build();
+    return  pi4j.create(spiConfig);
+}
 }

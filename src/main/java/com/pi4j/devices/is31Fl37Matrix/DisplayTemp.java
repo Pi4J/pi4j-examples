@@ -65,8 +65,6 @@ package com.pi4j.devices.is31Fl37Matrix;/*
 
 
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Declares;
-import com.pi4j.devices.bmp280.BMP280DeviceI2C;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
@@ -86,12 +84,11 @@ public class DisplayTemp {
     private final Logger logger;
     private final Context pi4j;
     private final Console console;
-    private BMP280DeviceI2C bmpDev;
-    private I2C bmeDev;
+    private I2C i2c;
     private Bmx280Driver bmx280Driver;
+    private static final int ID_VALUE_MSK_BME = 0x60;
 
-    /**
-     * This class includes the state -  private BMP280Device bmpDev;    This is required as Pi4j_V2
+    /* This class includes the state -  private BMP280Device bmpDev;    This is required as Pi4j_V2
      * does not permit repeated instantiations of an I2C device using the same Pi i2c Bus and address. So
      * this class creates the BMP280 device once and reuses that same instance on subsequent invocation.
      */
@@ -101,7 +98,6 @@ public class DisplayTemp {
         this.logger = logger;
         this.pi4j = pi4j;
         this.console = console;
-        this.bmpDev = null;
         this.bmx280Driver = null;
 
     }
@@ -120,23 +116,17 @@ public class DisplayTemp {
         this.logger.trace("parms :  blink : " + String.format("0x%02X", led_blink) + " loop_count : "
             + String.format("0x%02X", loop_count) + " bmp180 address : " + String.format("0x%02X", bmp_address));
 
-        if (sensorID == BMP280Declares.idValueMskBMP) {
-            if (this.bmpDev == null) {
-                this.bmpDev = new BMP280DeviceI2C(this.pi4j, this.console, bmp_bus, bmp_address, this.logger);
-            }
-            readings[0] = bmpDev.temperatureC();
-
-        } else if (sensorID == BMP280Declares.idValueMskBME) {
-            if (this.bmeDev == null) {
+    if (sensorID == ID_VALUE_MSK_BME) {
+            if (this.bmx280Driver == null) {
                 I2CConfig i2cConfig = I2C.newConfigBuilder(pi4j)
-                    .id("BME280")
+                    .id("BMP280")
                     .bus(bmp_bus)
                     .device(bmp_address)
                     .build();
 
                 // Read values 10 times
-                this.bmeDev = pi4j.create(i2cConfig);
-                bmx280Driver = new Bmx280Driver(bmeDev);
+                this.i2c = pi4j.create(i2cConfig);
+                bmx280Driver = new Bmx280Driver(this.i2c);
             }
             DecimalFormat df = new DecimalFormat("0.###");
 
@@ -159,7 +149,10 @@ public class DisplayTemp {
             readings[0] = Double.parseDouble(df.format(measurement.getTemperature()));
             readings[1] = Double.parseDouble(df.format(measurement.getHumidity()));
 
-        }
+        } else {
+        System.out.println("Incorrect I2C sensor installed/ or none found");
+         System.exit(42);
+     }
         double temp = readings[0];
         double humidity = readings[1];
         display_humidity_num = (int) humidity;
@@ -186,7 +179,22 @@ public class DisplayTemp {
         this.logger.trace("process_bmp_data");
 
     }
+    /**
+     * Use the state from the Sensor config object and the state pi4j to create
+     * a BMP280 device instance
+     */
+    private static I2C createI2cDevice(Context pi4j, int busNum, int address) {
 
+        String id = String.format("0X%02x: ", busNum);
+        String name = String.format("0X%02x: ", address);
+        var i2cDeviceConfig = I2C.newConfigBuilder(pi4j)
+            .bus(busNum)
+            .device(address)
+            .id(id + " " + name)
+            .name(name)
+            .build();
+        return  pi4j.create(i2cDeviceConfig);
+    }
     public void show_time(ControlLeds pin_monitor, int led_blink,
                           Integer loop_count) {
         int display_num = 42; // not used this method

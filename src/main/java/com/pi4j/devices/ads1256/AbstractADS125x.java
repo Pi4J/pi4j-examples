@@ -172,7 +172,6 @@ public abstract class AbstractADS125x implements ADS125x {
                 .address(this.pdwnPinNum)
                 .shutdown(DigitalState.HIGH)
                 .initial(DigitalState.HIGH)
-                .provider("gpiod-digital-output");
             try {
                 this.pdwnGpio = pi4j.create(pdwnConfig);
             } catch (Exception e) {
