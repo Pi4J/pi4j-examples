@@ -44,9 +44,9 @@ String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address  
 
 https://datasheetspdf.com/pdf-file/634126/MicrochipTechnology/MCP4728/1
 
--rde anf -rdf both have max input value 0x0FFF
+-d haa max input value 0x0FFF
 
--ef and -ev cannot exceed -vdd
+-v cannot exceed -vdd
 
 
 
