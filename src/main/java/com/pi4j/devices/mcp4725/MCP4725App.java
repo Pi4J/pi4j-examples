@@ -6,13 +6,19 @@ import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.io.da.mcp472x.Mcp4725Driver;
 import com.pi4j.io.i2c.I2C;
+import com.pi4j.io.i2c.I2CImplementation;
 import com.pi4j.util.Console;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MCP4725App {
 
     static void main(String[] args) {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "OFF");
+
+        Logger logger = LoggerFactory.getLogger(MCP4725App.class);
+        logger.trace(">>> Enter: init");
 
         Context pi4j = Pi4J.newAutoContext();
 
@@ -29,18 +35,17 @@ public class MCP4725App {
         int address = MCP4725_Declares._MCP4725_DEFAULT_ADDRESS;
          boolean doReset = false;
         int registerData = 0;
-        boolean setOutputEEPROM = false;
-        boolean setOutputFast = false;
         double vref = 0;
         float eepromVolt = 0;
-        float fastVolt = 0;
         int onlyOne = 0;   // numerous parms a mutually exclusive
+        boolean setOutputDigital = false;
+        boolean setOutputVoltage = false;
+        boolean persistValues  = false;
 
         String helpString = " parms: -b 0x? hex value bus    -a 0x?? hex value address    \n " +
-            "  -r  reset chip   -rde  update DAC and EEPROM \n" +
-            " -ev eeprom voltage  -fv fast voltage \n" +
-            " -rdf DAC value update fast   -vref decimal reference voltage\n " +
-            "-rde -ev -fv -rdf mutually exclusive" ;
+            "  -r  reset chip   -pv true/false  persist values  \n" +
+            " -v voltage   -d DAC digital value   -vref float reference voltage\n " +
+            "-d  -v  mutually exclusive" ;
 
            for (int i = 0; i < args.length; i++) {
             String o = args[i];
@@ -58,40 +63,30 @@ public class MCP4725App {
                 vref = Float.parseFloat(a);
             }  else if (o.contentEquals("-r")) {
                 doReset = true;
-            } else if (o.contentEquals("-rde")) {
+            } else if (o.contentEquals("-d")) {
                 String a = args[i + 1];
                 i++;
                 registerData = Integer.parseInt(a);
-                setOutputEEPROM = true;
+                setOutputDigital = true;
                 if (registerData < 0 || registerData > 4095) {
-                    console.println("-rde must be in range 0..4095");
+                    console.println("-d must be in range 0..4095");
                     System.exit(36);
-                }
-                onlyOne ++;
-            } else if (o.contentEquals("-rdf")) {
-                String a = args[i + 1];
-                i++;
-                setOutputFast = true;
-                registerData = Integer.parseInt(a);
-                if (registerData < 0 || registerData > 4095) {
-                    console.println("-rdf must be in range 0..4095");
-                    System.exit(37);
                 }
                 onlyOne ++;
             } else if (o.contentEquals("-h")) {
                 console.println(helpString);
                 System.exit(39);
-            } else if (o.contentEquals("-ev")) {  // eeprom volts
+            } else if (o.contentEquals("-v")) {  // eeprom volts
                 String a = args[i + 1];
                 i++;
+                setOutputVoltage = true;
                 eepromVolt = Float.parseFloat(a);
                 onlyOne ++;
-            } else if (o.contentEquals("-fv")) { // fast volts
-                String a = args[i + 1];
-                i++;
-                fastVolt = Float.parseFloat(a);
-                onlyOne ++;
-            } else {
+            }else if (o.contentEquals("-pv")) {
+                 String a = args[i + 1];
+                  persistValues = Boolean.parseBoolean(a);
+                 i++;
+            }  else {
                 console.println("  !!! Invalid Parm " + args);
                 console.println(helpString);
                 System.exit(42);
@@ -110,54 +105,35 @@ public class MCP4725App {
 
         }
         if ( (eepromVolt > vref)  || (eepromVolt < 0) ) {
-            console.println("-ev greater than -vref, or less than zero");
+            console.println("-v greater than -vref, or less than zero");
             System.exit(51);
-
         }
 
-        if ( (fastVolt > vref) || (fastVolt < 0) ) {
-            console.println("-ef greater than -vref, or less than zero");
-            System.exit(51);
-
-        }
 
         Mcp4725Driver dacChip ;
         I2C genCallDevice = null ;
-        I2C i2cDev = createI2cDevice("MCP4725",  busNum, address, pi4j) ;
+        I2C i2cDev = createI2cDevice("MCP4725",  busNum, address,  I2CImplementation.DIRECT, pi4j) ;
         dacChip = new Mcp4725Driver( i2cDev, vref);
 
         if (doReset) {
-			genCallDevice = createI2cDevice("GenCallReset", busNum,0x00, pi4j);
+			genCallDevice = createI2cDevice("GenCallReset", busNum,0x00, I2CImplementation.SMBUS, pi4j);
             dacChip.resetChip(genCallDevice);
         }
 
-        if (setOutputEEPROM) {
-            dacChip.setEepromEnabled(true);
-            try {
-                dacChip.setDigitalValue(registerData);
-            } catch (Exception e) {
-                console.println("Error occurred setting DAC output via register value failed. \n Exception "  + e.getMessage());
-            }
-            dacChip.setEepromEnabled(false);
-        }
-        if (setOutputFast) {
+        logger.info("\nBefore state : \n" + dacChip);
+
+        dacChip.setEepromEnabled(persistValues);
+
+        if (setOutputDigital) {
             dacChip.setDigitalValue(registerData);
         }
 
-        if (eepromVolt > 0) {
-            dacChip.setEepromEnabled(true);
-            try {
-                dacChip.setVoltage(0, eepromVolt);
-            } catch (Exception e) {
-                console.println("Error occurred setting DAC output via target voltage failed. \n Exception "  + e.getMessage());
-            }
-            dacChip.setEepromEnabled(false);
+        if (setOutputVoltage) {
+            dacChip.setVoltage(0, eepromVolt);
         }
 
+        logger.info("\nCompletion state : \n" + dacChip);
 
-        if (fastVolt > 0) {
-            dacChip.setVoltage(fastVolt);
-        }
 
 
         if (genCallDevice != null) {
@@ -170,20 +146,32 @@ public class MCP4725App {
 
     }
 
-    static I2C createI2cDevice( String chipType, int bus, int address, Context pi4j) {
+
+
+    /**
+     *
+     * @param chipType  String Part numer
+     * @param bus       INT
+     * @param address   INT
+     * @param pi4j      Context
+     * @return I2C device
+     */
+    static I2C createI2cDevice(String chipType, int bus, int address, I2CImplementation impType, Context pi4j) {
         String id = String.format("0X%02x: ", bus);
         String name = String.format("0X%02x: ", address);
         var i2cDeviceConfig = I2C.newConfigBuilder(pi4j)
             .bus(bus)
             .device(address)
-            .id("" + chipType + id + " " + name)
+            .id(chipType + id + " " + name)
             .name(name)
+            .i2cImplementation(impType)
             .build();
 
         return pi4j.create(i2cDeviceConfig);
 
 
     }
+
 
 }
 
