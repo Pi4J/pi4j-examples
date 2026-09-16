@@ -119,11 +119,11 @@
         <!--- log4j - version 2   -->
 
         <!-- include Pi4J Plugins (Platforms and I/O Providers) -->
-        <dependency>
+        <!--dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-raspberrypi</artifactId>
             <version>${pi4j.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-drivers</artifactId>
