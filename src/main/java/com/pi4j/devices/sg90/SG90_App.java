@@ -30,13 +30,16 @@ class SG90_App {
     private static final int DEFAULT_CHANNEL_NUMBER = 2;
     private static final int SERVO_NUMBER = 1;
 
+    private static final double LOW_PULSSE = 1000.0;
+    private static final double HIGH_PULSE = 2000.0;
+
     private static Integer channel = DEFAULT_CHANNEL_NUMBER ;
     private static Console console ;
     private static SG90Driver sg90 ;
     private static final Delay delay = new Delay();
     private static java.util.Scanner scanner;
-    private static Double lowPulse = 1000.0;
-    private static Double highPulse = 2000.0;
+    private static double lowPulse = LOW_PULSSE;
+    private static double highPulse = HIGH_PULSE;
 
 
     public SG90_App() {
@@ -104,7 +107,7 @@ class SG90_App {
             delay.setMillis(c).materialize();
             console.println("Enter degree value or enter any key to quit");
             if (scanner.hasNextInt() ) {
-                Double nextDegree = scanner.nextDouble();
+                double nextDegree = scanner.nextDouble();
                 if((nextDegree < 0.0) || (nextDegree > 180.0)){
                     console.println("  degree must be in the range 0..180");
                 }else {
