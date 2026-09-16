@@ -51,7 +51,7 @@ public class SG90_App {
         console = new Console();
         Context pi4j = Pi4J.newAutoContext();
         console.title("<-- The Pi4J V5 Project Extension  -->", "SG90_App");
-        String helpString = " Parms: -d Degree  -c channel   -h HELP";
+        String helpString = " Parms: -d Degree  -c channel   -q quit -h HELP";
 
 
         for (int i = 0; i < args.length; i++) {
@@ -85,8 +85,6 @@ public class SG90_App {
 
         sg90 = new SG90Driver(pwm);
 
-        sg90.setServoAngle(degree);
-
         waitChange( 10l);
 
         pwm.close();
@@ -118,11 +116,9 @@ public class SG90_App {
                 .name ("SG90 number " + servoNumber)
                 .channel(3) // this.address)  //or 1 LED on gpio13  the second channel
                 .pwmType(PwmType.HARDWARE)
-                .initial(0)
                 .channel(channel)
                 .chip(PwmChipUtil.getPWMChip())
                 .frequency(50)
-                .shutdown (0)
                 .build ();
 
         return pi4j.create (config);

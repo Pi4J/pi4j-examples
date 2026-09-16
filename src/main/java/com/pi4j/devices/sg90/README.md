@@ -33,7 +33,8 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 3. ./runSG90.sh   args
 
 -h  channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
--d  degree    (default 90) 
+-d  degree   
+-q  quit
 
 
 Set ouput shaft at 120 degree
