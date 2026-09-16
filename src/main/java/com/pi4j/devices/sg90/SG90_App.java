@@ -21,15 +21,23 @@ import com.pi4j.util.Delay;
  *   SG90 servo motor control.  The driver will use the PWM device created by
  *   this app. It is assumed the device is a HardWare PWM.  Hardware PWM creates
  *   a more consistent PWM signal.
+ *
+ *   See README.md for more information and detail.
  */
-public class SG90_App {
-    private static Pwm pwm ;
-    private static double degree = 90;
-    private static Integer channel = 2 ;
+class SG90_App {
+
+    private static final int DEFAULT_PWM_FREQUENCY = 50;
+    private static final int DEFAULT_CHANNEL_NUMBER = 2;
+    private static final int SERVO_NUMBER = 1;
+
+    private static Integer channel = DEFAULT_CHANNEL_NUMBER ;
     private static Console console ;
     private static SG90Driver sg90 ;
     private static final Delay delay = new Delay();
     private static java.util.Scanner scanner;
+    private static float lowPulse = 1000;
+    private static float highPulse = 2000;
+
 
     public SG90_App() {
         super();
@@ -43,7 +51,7 @@ public class SG90_App {
      * @param args an array of {@link java.lang.String} objects.
      * @throws java.lang.Exception if any.
      */
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
 
         scanner = new java.util.Scanner(System.in);
@@ -51,18 +59,18 @@ public class SG90_App {
         console = new Console();
         Context pi4j = Pi4J.newAutoContext();
         console.title("<-- The Pi4J V5 Project Extension  -->", "SG90_App");
-        String helpString = " Parms: -d Degree  -c channel   -q quit -h HELP";
+        String helpString = " Parms: -c channel   -q quit -low microseconds -high microseconds -h HELP";
 
 
         for (int i = 0; i < args.length; i++) {
             String o = args[i];
-            if (o.contentEquals("-d")) {
+            if (o.contentEquals("-low")) {
                 String a = args[i + 1];
-                degree = Double.parseDouble(a.substring(0));
-                if((degree < 0) || (degree > 180)){
-                    console.println("-d  degree must be in range 0..180");
-                    System.exit(40);
-                     }
+                lowPulse = Integer.parseInt(a.substring(0));
+                i++;
+            } else if (o.contentEquals("-high")) {
+                String a = args[i + 1];
+                highPulse = Integer.parseInt(a.substring(0));
                 i++;
             }  else if (o.contentEquals("-c")) {
                 String a = args[i + 1];
@@ -81,11 +89,11 @@ public class SG90_App {
             }
         }
 
-        pwm = createPwm(1, channel, pi4j);
+        Pwm pwm = createPwm(SERVO_NUMBER, channel, pi4j);
 
-        sg90 = new SG90Driver(pwm);
+        sg90 = new SG90Driver(pwm, lowPulse, highPulse);
 
-        waitChange( 10l);
+        waitChange( 10L);
 
         pwm.close();
 
@@ -94,11 +102,11 @@ public class SG90_App {
     static void waitChange(long c){
         while(true){
             delay.setMillis(c).materialize();
-            console.println("Enter degree value or enter q quit");
+            console.println("Enter degree value or enter any key to quit");
             if (scanner.hasNextInt() ) {
-                int nextDegree = scanner.nextInt();
+                float nextDegree = scanner.nextFloat();
                 if((nextDegree < 0) || (nextDegree > 180)){
-                    console.println("-d  degree must be in the range 0..180");
+                    console.println("  degree must be in the range 0..180");
                 }else {
                     sg90.setServoAngle(nextDegree);
                 }
@@ -114,11 +122,11 @@ public class SG90_App {
             final PwmConfig config = PwmConfigBuilder.newInstance (pi4j)
                 .id ("sg90Number" + servoNumber)
                 .name ("SG90 number " + servoNumber)
-                .channel(3) // this.address)  //or 1 LED on gpio13  the second channel
+                .channel(channel)
                 .pwmType(PwmType.HARDWARE)
                 .channel(channel)
                 .chip(PwmChipUtil.getPWMChip())
-                .frequency(50)
+                .frequency(DEFAULT_PWM_FREQUENCY)
                 .build ();
 
         return pi4j.create (config);

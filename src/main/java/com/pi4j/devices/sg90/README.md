@@ -1,26 +1,26 @@
 #  SG90  servo motor
 
 https://www.scribd.com/document/420327552/Servo
-This device does not have a customary DataSheet
+https://www.friendlywire.com/projects/ne555-servo-safe/SG90-datasheet.pdf
+
+These devices do not have a customary DataSheet.  Most servo devices provide limited specifications 
+for required pulse width, they just say 1 - 2 millisecond.
+
+The SG90 defines a specific PWM interface and exactly how the PWN signal
+controls the servo. There are many different manufacturers of the SG90 servo. 
+The pulse width required for setting the servo at 0 degrees or 180 degrees varies by 
+manufacturer. The driver by default uses the pulse width timing as 
+(low)1000 - (high)2000 microseconds. The user of this example application can change these defaults when first 
+invoking the program.
+
+If the servo does not rotate to the desired position, Example: to rotate closer to the 0 degree 
+point reduce the -low argument, to rotate closer to the 180 degree point increase the
+-high argument. The -low -high change should be balanced or 90 degree will not properly align.
+Meaning if you reduce the -low by 200, you should increase the -high by 200, or visa-versa. 
 
 
- The SG90 defines a specific PWM interface and exactly how the PWN signal
- controls the servo
 
-  https://www.friendlywire.com/projects/ne555-servo-safe/SG90-datasheet.pdf
-
-  SG90 Duty Cycle Reference TableAssuming a standard 50Hz frequency (20ms total wave period),
-  here is how the pulse width and duty cycle map to standard angles for the SG90 Servo Motor Guide:
-  |  Angle (Degrees)  |  Pulse Width (Us)     |        Duty Cycle (%)     |
-  |-----------------------------------------------------------------------|
-  |     0             |      0.5 us           |         2.5 %             |
-  |     90            |      1.5 us           |         7.5 %             |
-  |     180           |      2.5 us           |         12.5 %            |
-  |-----------------------------------------------------------------------|
-
-
-
-  
+ 
   SG90                Pi
 Grey/Brown          Ground
 Red                 5V
@@ -32,16 +32,29 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 2. cd target/distribution
 3. ./runSG90.sh   args
 
--h  channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
--d  degree   
--q  quit
+-c      channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
+-low    float pulse width for 0 degree microseconds
+-high   float pulse width for 180 degree microseconds
+-q      quit
+-h      help
 
+./runSG90.sh begins execution of the application, you then enter the desired servo degree of rotation.
+Then continue entering the requested degree value, or any key will exist the program.
 
 Set ouput shaft at 120 degree
-./runSG90.sh   -d 120     
+./runSG90.sh   
+         120     
 
+Driver defaults to 0 degree requires a 1000 micro second pulse, 180 degree requires a 2000 microsecond pulse
+If your servo requires different pulse widths
 
+Set low high pulse widths, then set output shaft at 120 degree
+./runSG90.sh  -low 600 -high 2400 
+     120
 
+My SG90 aligns correctly with these values
+./runSG90.sh  -low 550 -high 2450
 
 If your configuration uses a channel other than 2
-./runSG90.sh -c 1 -d 120     
+./runSG90.sh -c 1 
+    120     
