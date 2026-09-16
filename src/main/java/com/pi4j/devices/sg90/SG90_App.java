@@ -94,7 +94,7 @@ public class SG90_App {
     static void waitChange(long c){
         while(true){
             delay.setMillis(c).materialize();
-            console.println("Enter q - quit, or degree value ");
+            console.println("Enter degree value or enter q quit");
             if (scanner.hasNextInt() ) {
                 int nextDegree = scanner.nextInt();
                 if((nextDegree < 0) || (nextDegree > 180)){
