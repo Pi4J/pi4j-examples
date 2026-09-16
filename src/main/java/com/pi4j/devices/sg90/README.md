@@ -21,7 +21,7 @@ Meaning if you reduce the -low by 200, you should increase the -high by 200, or 
 
 
  Connections between the SG90 servo and the Raspberry Pi
-  SG90                Pi
+  SG90              Pi
 Grey/Brown          Ground
 Red                 5V
 Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
@@ -30,31 +30,31 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 
 1. ./mvnw clean package
 2. cd target/distribution
-3. ./runSG90.sh   args
+3. ./runSg90.sh   args
 
 -c      channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
--low    float pulse width for 0 degree microseconds
--high   float pulse width for 180 degree microseconds
+-low    double pulse width for 0 degree microseconds
+-high   double pulse width for 180 degree microseconds
 -q      quit
 -h      help
 
-./runSG90.sh begins execution of the application, you then enter the desired servo degree of rotation.
+./runSg90.sh begins execution of the application, you then enter the desired servo degree of rotation.
 Then continue entering the requested degree value, or any key will exist the program.
 
 Set ouput shaft at 120 degree
-./runSG90.sh   
+./runSg90.sh   
          120     
 
 Driver defaults to 0 degree requires a 1000 micro second pulse, 180 degree requires a 2000 microsecond pulse
 If your servo requires different pulse widths
 
 Set low high pulse widths, then set output shaft at 120 degree
-./runSG90.sh  -low 600 -high 2400 
+./runSg90.sh  -low 600 -high 2400 
      120
 
-My SG90 aligns correctly with these values
-./runSG90.sh  -low 550 -high 2450
+My Sg90 aligns correctly with these values
+./runSg90.sh  -low 550 -high 2450
 
 If your configuration uses a channel other than 2
-./runSG90.sh -c 1 
+./runSg90.sh -c 1 
     120     

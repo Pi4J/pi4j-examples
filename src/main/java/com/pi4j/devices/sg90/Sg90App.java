@@ -24,7 +24,7 @@ import com.pi4j.util.Delay;
  * <p>
  * See README.md for more information and detail.
  */
-class SG90_App {
+class Sg90App {
 
     private static final int DEFAULT_PWM_FREQUENCY = 50;
     private static final int DEFAULT_CHANNEL_NUMBER = 2;
@@ -42,7 +42,7 @@ class SG90_App {
     private static double highPulse = HIGH_PULSE;
 
 
-    public SG90_App() {
+    public Sg90App() {
         super();
 
     }
@@ -61,7 +61,7 @@ class SG90_App {
 
         console = new Console();
         Context pi4j = Pi4J.newAutoContext();
-        console.title("<-- The Pi4J V5 Project Extension  -->", "SG90_App");
+        console.title("<-- The Pi4J V5 Project Extension  -->", "Sg90App");
         String helpString = " Parms: -c channel   -q quit -low microseconds -high microseconds -h HELP";
 
 
