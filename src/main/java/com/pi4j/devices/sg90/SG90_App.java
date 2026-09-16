@@ -64,7 +64,7 @@ public class SG90_App {
                     System.exit(40);
                      }
                 i++;
-            } else if (o.contentEquals("-c")) {
+            }  else if (o.contentEquals("-c")) {
                 String a = args[i + 1];
                 channel = Integer.parseInt(a.substring(0));
                 i++;
@@ -100,7 +100,7 @@ public class SG90_App {
             if (scanner.hasNextInt() ) {
                 int nextDegree = scanner.nextInt();
                 if((nextDegree < 0) || (nextDegree > 180)){
-                    console.println("-d  degree must be in range 0..180");
+                    console.println("-d  degree must be in the range 0..180");
                 }else {
                     sg90.setServoAngle(nextDegree);
                 }
