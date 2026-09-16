@@ -35,8 +35,8 @@ class SG90_App {
     private static SG90Driver sg90 ;
     private static final Delay delay = new Delay();
     private static java.util.Scanner scanner;
-    private static float lowPulse = 1000;
-    private static float highPulse = 2000;
+    private static Double lowPulse = 1000.0;
+    private static Double highPulse = 2000.0;
 
 
     public SG90_App() {
@@ -66,11 +66,11 @@ class SG90_App {
             String o = args[i];
             if (o.contentEquals("-low")) {
                 String a = args[i + 1];
-                lowPulse = Integer.parseInt(a.substring(0));
+                lowPulse = Double.parseDouble(a.substring(0));
                 i++;
             } else if (o.contentEquals("-high")) {
                 String a = args[i + 1];
-                highPulse = Integer.parseInt(a.substring(0));
+                highPulse = Double.parseDouble(a.substring(0));
                 i++;
             }  else if (o.contentEquals("-c")) {
                 String a = args[i + 1];
@@ -104,8 +104,8 @@ class SG90_App {
             delay.setMillis(c).materialize();
             console.println("Enter degree value or enter any key to quit");
             if (scanner.hasNextInt() ) {
-                float nextDegree = scanner.nextFloat();
-                if((nextDegree < 0) || (nextDegree > 180)){
+                Double nextDegree = scanner.nextDouble();
+                if((nextDegree < 0.0) || (nextDegree > 180.0)){
                     console.println("  degree must be in the range 0..180");
                 }else {
                     sg90.setServoAngle(nextDegree);
