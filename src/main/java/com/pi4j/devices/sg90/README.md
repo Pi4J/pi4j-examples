@@ -24,7 +24,7 @@ This device does not have a customary DataSheet
   SG90                Pi
 Grey/Brown          Ground
 Red                 5V
-Yellow              GPIO18
+Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 
 
 

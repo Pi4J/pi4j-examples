@@ -17,7 +17,11 @@ import com.pi4j.io.pwm.PwmType;
 import com.pi4j.util.Console;
 import com.pi4j.util.Delay;
 
-
+/**
+ *   SG90 servo motor control.  The driver will use the PWM device created by
+ *   this app. It is assumed the device is a HardWare PWM.  Hardware PWM creates
+ *   a more consistent PWM signal.
+ */
 public class SG90_App {
     private static Pwm pwm ;
     private static double degree = 90;
@@ -106,9 +110,6 @@ public class SG90_App {
          }
     }
 
-    static double degreeToDutyCycle(Double degree){
-      return (degree/180 * 10 ) + 2.5;
-    }
 
     static Pwm createPwm(int servoNumber, Integer channel, Context pi4j) {
 
