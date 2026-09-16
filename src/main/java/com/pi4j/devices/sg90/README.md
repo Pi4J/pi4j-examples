@@ -20,7 +20,7 @@ Meaning if you reduce the -low by 200, you should increase the -high by 200, or 
 
 
 
- 
+ Connections between the SG90 servo and the Raspberry Pi
   SG90                Pi
 Grey/Brown          Ground
 Red                 5V
