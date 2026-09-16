@@ -13,9 +13,9 @@ This device does not have a customary DataSheet
   here is how the pulse width and duty cycle map to standard angles for the SG90 Servo Motor Guide:
   |  Angle (Degrees)  |  Pulse Width (Us)     |        Duty Cycle (%)     |
   |-----------------------------------------------------------------------|
-  |     0             |      0.5 ms           |         2.5 %             |
-  |     45            |      1.0 ms           |         5.0 %             |
-  |     90            |      1.5 ms           |         7.5 %             |
+  |     0             |      0.5 us           |         2.5 %             |
+  |     90            |      1.5 us           |         7.5 %             |
+  |     180           |      2.5 us           |         12.5 %            |
   |-----------------------------------------------------------------------|
 
 
