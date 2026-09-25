@@ -33,9 +33,9 @@
 
         <!-- DEPENDENCIES VERSIONS  2.0.3  -SNAPSHOT  -->
         <slf4j.version>2.0.17</slf4j.version>
-        <pi4j.version>4.0.1</pi4j.version>
-        <!--pi4j.version>5.0.0-SNAPSHOT</pi4j.version -->
 
+        <pi4j.version>5.0.0-SNAPSHOT</pi4j.version>
+        <pi4j-driver.version>2.0.0-SNAPSHOT</pi4j-driver.version>
         <!-- BUILD PLUGIN VERSIONS -->
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
@@ -59,6 +59,17 @@
             <id>oss-snapshots-M2-repo</id>
             <name>Sonatype OSS Maven2 Repository</name>
             <url>https://mvnrepository.com/artifact/org.apache.felix/maven-bundle-plugin</url>
+        </repository>
+        <repository>
+            <id>sonatype-snapshots</id>
+            <name>Maven Central Snapshots</name>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>sonatype-oss-staging</id>
@@ -119,15 +130,15 @@
         <!--- log4j - version 2   -->
 
         <!-- include Pi4J Plugins (Platforms and I/O Providers) -->
-        <dependency>
+        <!--dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-raspberrypi</artifactId>
             <version>${pi4j.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-drivers</artifactId>
-            <version>1.1.1-SNAPSHOT</version>
+            <version>${pi4j-driver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
