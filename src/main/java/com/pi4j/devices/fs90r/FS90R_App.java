@@ -44,7 +44,7 @@ import com.pi4j.util.Delay;
  */
 
     /**
-     *   SG90R servo motor control.  The driver will use the PWM device created by
+     *   FS90R servo motor control.  The driver will use the PWM device created by
      *   this app. It is assumed the device is a HardWare PWM.  Hardware PWM creates
      *   a more consistent PWM signal.
      */
@@ -56,15 +56,14 @@ import com.pi4j.util.Delay;
 
 
 
-        private static Pwm pwm ;
-        private static float degree = 90;
+       private static Double degree = 90.0;
         private static Integer channel = DEFAULT_CHANNEL_NUMBER ;
         private static Console console ;
         private static Fs90RDriver fs90R ;
         private static final Delay delay = new Delay();
         private static java .util.Scanner scanner;
-        private static float lowPulse = 1000;
-        private static float highPulse = 2000;
+        private static Double lowPulse = 1000.0;
+        private static Double highPulse = 2000.0;
 
 
         public FS90R_App() {
@@ -88,7 +87,7 @@ import com.pi4j.util.Delay;
 
             console = new Console();
             Context pi4j = Pi4J.newAutoContext();
-            console.title("<-- The Pi4J V5 Project Extension  -->", "SG90_App");
+            console.title("<-- The Pi4J V5 Project Extension  -->", "FS90R_App");
             String helpString = " Parms: -c channel -cw (clockwise) S M F  -ccw (counter-clockwise) S M F  -h HELP \n" +
                 "    -low microseconds -high microseconds  -cw -ccw mutually exclusive  -d degree \n" +
                 "    degree must be in the range 0..180. 90 stop, 0..89 CW, 91..180 CCW ";
@@ -98,16 +97,16 @@ import com.pi4j.util.Delay;
                 String o = args[i];
                 if (o.contentEquals("-low")) {
                     String a = args[i + 1];
-                    lowPulse = Integer.parseInt(a.substring(0));
+                    lowPulse = Double.parseDouble(a.substring(0));
                     i++;
                 } else if (o.contentEquals("-high")) {
                     String a = args[i + 1];
-                    highPulse = Integer.parseInt(a.substring(0));
+                    highPulse = Double.parseDouble(a.substring(0));
                     i++;
-                }  if (o.contentEquals("-d")) {
+                } else if (o.contentEquals("-d")) {
                     String a = args[i + 1];
-                    degree = Float.parseFloat(a.substring(0));
-                    if((degree < 0) || (degree > 180)){
+                    degree = Double.parseDouble(a.substring(0));
+                    if((!Double.isFinite(degree) || degree < 0) || (degree > 180)){
                         console.println("-d  degree must be in range 0..180");
                         System.exit(40);
                     }
@@ -122,11 +121,11 @@ import com.pi4j.util.Delay;
                     onlyOne++;
                     i++;
                     if (a.equalsIgnoreCase("S")) {
-                        degree = 75;
+                        degree = 75.0;
                     } else if (a.equalsIgnoreCase("M")) {
-                        degree = 40;
+                        degree = 40.0;
                     }  else if (a.equalsIgnoreCase("F")) {
-                        degree = 0;
+                        degree = 0.0;
                     } else {
                         console.println("  -cw invalid ");
                         System.exit(41);
@@ -136,11 +135,11 @@ import com.pi4j.util.Delay;
                     i++;
                     onlyOne++;
                    if (a.equalsIgnoreCase("S")) {
-                        degree = 105;
+                        degree = 105.0;
                     } else if (a.equalsIgnoreCase("M")) {
-                        degree = 140;
+                        degree = 140.0;
                     }  else if (a.equalsIgnoreCase("F")) {
-                        degree = 180;
+                        degree = 180.0;
                     } else {
                         console.println("  -cw invalid ");
                         System.exit(42);
@@ -163,7 +162,7 @@ import com.pi4j.util.Delay;
                 console.println(helpString);
                 System.exit(44);
             }
-            pwm = createPwm(SERVO_NUMBER, DEFAULT_CHANNEL_NUMBER, pi4j);
+            Pwm pwm = createPwm(SERVO_NUMBER, channel, pi4j);
 
             fs90R = new Fs90RDriver(pwm, lowPulse, highPulse);
 
@@ -191,14 +190,13 @@ import com.pi4j.util.Delay;
             return pi4j.create (config);
         }
 
-// todo  -cw   -ccw   -d
-         static void waitChange(long c){
+        static void waitChange(long c){
             while(true){
                 delay.setMillis(c).materialize();
                 console.println("Enter q - quit, or degree value ");
                 if (scanner.hasNextInt() ) {
-                    int nextDegree = scanner.nextInt();
-                    if((nextDegree < 0) || (nextDegree > 180)){
+                    Double nextDegree = scanner.nextDouble();
+                    if((!Double.isFinite(nextDegree) || nextDegree < 0) || (nextDegree > 180)){
                         console.println(" degree must be in the range 0..180. 90 stop, 0..89 CW, 91..180 CCW");
                     }else {
                         fs90R.setServoRotation(nextDegree);
