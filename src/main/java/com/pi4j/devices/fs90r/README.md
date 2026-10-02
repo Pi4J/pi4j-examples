@@ -1,12 +1,12 @@
 
 
-##Device application to operate a FS90R stepping servo.  This servo can rotate 360 degree continuously. 
+##Device application to operate a Fs90r stepping servo.  This servo can rotate 360 degree continuously. 
 The PWM signal sent to the servo device set the direction and RPM of rotation.
 
 
 
- Driver for a FS90R servo motor.
- The Fs90R defines a specific PWM interface and exactly how the PWN signal
+ Driver for a Fs90r servo motor.
+ The Fs90r defines a specific PWM interface and exactly how the PWN signal
  controls the servo
 
  https://www.pololu.com/product/2820
@@ -31,9 +31,9 @@ The PWM signal sent to the servo device set the direction and RPM of rotation.
 
  https://www.pololu.com/product/2820
 
-]()
 
-FS90R               Pi
+
+Fs90r               Pi
 Grey/Brown          Ground
 Red                 5V
 Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
@@ -42,7 +42,7 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 
 1. ./mvnw clean package
 2. cd target/distribution
-3. ./runFS90R.sh   args
+3. ./runFs90r.sh   args
 
 -h    help
 -c    channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
@@ -54,21 +54,21 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 
 
 Application running, awaiting input of 0-180 degree
-./runFS90R.sh
+./runFs90r.sh
 
 Application running  CCW, then awaiting input of 0-180 degree
-./runFS90R.sh 160
+./runFs90r.sh 160
 
 
 
 Set output shaft Fast ClockWise, then enter 90 for stop
-./runFS90R.sh   -cw F     
+./runFs90r.sh   -cw F     
          90
 
 
 Set output shaft Slow CounterClockWise, then enter 0 for MAX soeed
-./runFS90R.sh   -ccw S     
+./runFs90r.sh   -ccw S     
       0
 
-My FS90R appears faster rotation wih these values for the -low and -high limmits
-./runFS90R.sh  -low 550 -high 2450
+My Fs90r appears faster rotation wih these values for the -low and -high limmits
+./runFs90r.sh  -low 550 -high 2450
