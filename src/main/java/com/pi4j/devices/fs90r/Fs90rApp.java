@@ -69,7 +69,7 @@ import com.pi4j.util.Delay;
 
             console = new Console();
             Context pi4j = Pi4J.newAutoContext();
-            console.title("<-- The Pi4J V5 Project Extension  -->", "FS90R_App");
+            console.title("<-- The Pi4J V5 Project Extension  -->", "Fs90rApp");
             String helpString = " Parms: -c channel -cw (clockwise) S M F  -ccw (counter-clockwise) S M F  -h HELP \n" +
                 "    -low microseconds -high microseconds  -cw -ccw mutually exclusive  -d degree \n" +
                 "    degree must be in the range 0..180. 90 stop, 0..89 CW, 91..180 CCW ";
