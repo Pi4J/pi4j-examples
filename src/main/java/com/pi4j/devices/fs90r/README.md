@@ -44,13 +44,13 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 2. cd target/distribution
 3. ./runFs90r.sh   args
 
--h    help
--c    channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
--cw   clockwise S M F
--ccw  counter-clockwise S M F
--low    float pulse width for 0 degree microseconds
--high   float pulse width for 180 degree microseconds
--q    quit      servo will stop
+-h      help
+-c      channel   (default 2)   set the channel, depending on config.txt 1 2 3 4  
+-cw     clockwise S M F
+-ccw    counter-clockwise S M F
+-low    double pulse width for 0 degree microseconds
+-high   double pulse width for 180 degree microseconds
+-q      quit      servo will stop
 
 
 Application running, awaiting input of 0-180 degree
