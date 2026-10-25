@@ -5,7 +5,6 @@ import com.pi4j.context.Context;
 import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.display.character.hd44780.Hd44780Driver;
 import com.pi4j.io.i2c.I2C;
-import com.pi4j.io.i2c.I2CConfigBuilder;
 
 /** Application rendering auto-detected I2C sensors on a 16x2 LCD connected via a PCF8574. */
 public class SensorDisplay1602App {

@@ -4,9 +4,7 @@ import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.display.character.CharacterDisplay;
 import com.pi4j.drivers.display.character.hd44780.Hd44780Driver;
-import com.pi4j.examples.sensor.display.SensorAggregator;
 import com.pi4j.io.i2c.I2C;
-import com.pi4j.io.i2c.I2CConfigBuilder;
 
 public class SensorServer2004App {
     private static final int I2C_BUS = 1;
