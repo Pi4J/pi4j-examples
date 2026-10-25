@@ -18,7 +18,6 @@ public class Autodetect {
     public static void main(String[] args) {
 
         Context pi4j = Pi4J.newAutoContext();
-
         List<Sensor> sensorList = SensorDetector.detectI2cSensors(pi4j, BUS);
 
         if (sensorList.isEmpty()) {

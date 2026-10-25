@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /** A tiny embedded http 1.0 server without any capabilities except serving a bunch of files with generated content. */
-public class TinyWebServer {
+public class TinyWebServer implements Runnable {
     private final int port;
     private final ServerSocket serverSocket;
     private final Map<String, Pair<String, Consumer<PrintWriter>>> handlers = new HashMap<>();
