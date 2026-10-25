@@ -7,36 +7,39 @@ import com.pi4j.drivers.sensor.Sensor;
 import com.pi4j.drivers.sensor.SensorDescriptor;
 import com.pi4j.drivers.sensor.SensorDetector;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
- * Sensor display helper class, bundling a list of sensors and a character display.
+ * Sensor aggregation helper class, bundling a list of sensors and a character display.
  * It's able to aggregates sensor readings and display them on the given display.
  */
-public class SensorDisplay {
+public class SensorAggregator {
     private static final int CONSOLE_WIDTH = 32;
     private static final int DEFAULT_I2C_BUS = 1;
 
     private final CharacterDisplay display;
     private final List<Sensor> sensorList;
 
+    private int displayOffset;
+
     /**
      * Creates a SensorDisplay for the given sensor list and the given display. If display is null, we'll
      * render to the console.
      */
-    public SensorDisplay(List<Sensor> sensorList, CharacterDisplay display) {
+    public SensorAggregator(List<Sensor> sensorList, CharacterDisplay display) {
         this.display = display;
         this.sensorList = sensorList;
+    }
+
+    public List<Sensor> getSensorList() {
+        return Collections.unmodifiableList(sensorList);
     }
 
     /**
      * Creates a SensorDisplay for the I2C sensors detected on the given bus and the given display.
      * If display is null, we'll render to the console.
      */
-    public SensorDisplay(Context context, int bus, CharacterDisplay display) {
+    public SensorAggregator(Context context, int bus, CharacterDisplay display) {
         this(SensorDetector.detectI2cSensors(context, bus), display);
     }
 
@@ -61,62 +64,99 @@ public class SensorDisplay {
         return results;
     }
 
-    /**
-     * Renders the given measurements on the display, averaging all values of the same type.
-     */
-    public void displayMeasurements(Map<SensorDescriptor.Kind, Map<Sensor, Double>> measurements) {
-        int row = 0;
-        int displayWidth = display == null ? CONSOLE_WIDTH : display.getWidth();
+    public Map<SensorDescriptor.Kind, Double> readAveragedMeasurements() {
+        Map<SensorDescriptor.Kind, Map<Sensor, Double>> measurements = readMeasurements();
+        Map<SensorDescriptor.Kind, Double> result = new TreeMap<>();
         for (Map.Entry<SensorDescriptor.Kind, Map<Sensor, Double>> entry: measurements.entrySet()) {
             double average = entry.getValue().values().stream()
                 .mapToDouble(Number::doubleValue)
                 .average()
                 .getAsDouble();
+            result.put(entry.getKey(), average);
+        }
+        return result;
+    }
 
-            String formatted = formatReading(entry.getKey(), average, displayWidth);
+    /**
+     * Renders the given averaged measurements on the display, keeping track of an offset if there
+     * is not enough space on the display.
+     */
+    public Map<SensorDescriptor.Kind, Double> displayAveragedMeasurements(Map<SensorDescriptor.Kind, Double> measurements) {
+        int count = measurements.size();
+        int displayWidth = display == null ? CONSOLE_WIDTH : display.getWidth();
+        int displayHeight = display == null ? Integer.MAX_VALUE : display.getHeight();
+
+        int columnWidth = displayWidth;
+        int columnCount = 1;
+        if (count > displayHeight && displayWidth >= 16) {
+            columnCount = 2;
+            columnWidth = displayWidth / 2;
+        }
+
+        int row = -displayOffset;
+        int column = 0;
+
+        for (Map.Entry<SensorDescriptor.Kind,Double> entry: measurements.entrySet()) {
+            String formatted = formatSensorValue(entry.getKey(), entry.getValue(), columnWidth);
             if (display == null) {
                 System.out.println(formatted);
             } else {
-                display.writeAt(0, row++, formatted);
+                if (row >= 0 && row < display.getHeight()) {
+                    display.writeAt(column, row, formatted);
                 }
+                column += columnWidth;
+                if (column > displayWidth - columnWidth) {
+                    column = 0;
+                    row++;
+                }
+            }
         }
         if (display == null) {
             System.out.println();
+        } else {
+            displayOffset += display.getHeight() * columnCount;
+            if (displayOffset >= count) {
+                displayOffset = 0;
+            }
         }
+        return measurements;
     }
 
     /**
      * Convenience method combining reading and rendering sensor data.
      */
-    public Map<SensorDescriptor.Kind, Map<Sensor, Double>> readAndDisplayMeasurements() {
-        Map<SensorDescriptor.Kind, Map<Sensor, Double>> measurements = readMeasurements();
-        displayMeasurements(measurements);
-        return measurements;
+    public Map<SensorDescriptor.Kind, Double> readAndDisplayAveragedMeasurements() {
+        return displayAveragedMeasurements(readAveragedMeasurements());
     }
-
-    // Helpers
 
     /**
      * Formats a sensor reading to a given number of columns.
      */
-    public static String formatReading(SensorDescriptor.Kind kind, double value, int columns) {
+    public static String formatSensorValue(SensorDescriptor.Kind kind, double value, int columns) {
+        String renderedUnit = kind.measurementUnit.toString();
+        if (kind.measurementUnit == SensorDescriptor.MeasurementUnit.PASCAL) {
+            renderedUnit = "hPa";
+            value /= 100;
+        }
         String renderedValue = String.valueOf(Math.round(value));
-        String renderedLabel = Character.toUpperCase(kind.toString().charAt(0)) + kind.toString().substring(1);
-
+        if (columns < 12) {
+            return String.format("%" + (columns - 3) + "s%-3s", renderedValue, renderedUnit);
+        }
         int available = columns - renderedValue.length() - 6;
+        String renderedLabel = Character.toUpperCase(kind.toString().charAt(0)) + kind.toString().substring(1);
         if (renderedLabel.length() > available) {
             renderedLabel = renderedLabel.substring(0, available - 1) + ".";
         }
-        return String.format("%-" + (available + 1) + "s %s %-3s", (renderedLabel + ":"), renderedValue, kind.measurementUnit);
+        return String.format("%-" + (available + 1) + "s %s %-3s", (renderedLabel + ":"), renderedValue, renderedUnit);
     }
 
     /** Simple main to test aggregation and rendering using the console */
     public static void main(String[] args) throws InterruptedException {
         Context pi4j = Pi4J.newAutoContext();
-        SensorDisplay sensorDisplay = new SensorDisplay(pi4j, DEFAULT_I2C_BUS, null);
+        SensorAggregator sensorDisplay = new SensorAggregator(pi4j, DEFAULT_I2C_BUS, null);
 
         while (true) {
-            sensorDisplay.readAndDisplayMeasurements();
+            sensorDisplay.readAndDisplayAveragedMeasurements();
             Thread.sleep(5_000);
         }
     }
