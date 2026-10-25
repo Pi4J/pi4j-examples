@@ -1,5 +1,7 @@
 # HomeAssistant Pi4J Sensor Wireup Example
 
+![Sensor data rendered on a 1602 LCD dispaly](sensor_display_2004.jpg)
+
 A simple REST server that reports the measurements for all 
 auto-detected I2C sensors as a simple JSON object.
 

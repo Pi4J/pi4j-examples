@@ -1,6 +1,6 @@
 # Sensor Display Example
 
-![Sensor data rendered on a 1602 LCD dispaly](sensor_dispay_1602.jpg)
+![Sensor data rendered on a 1602 LCD dispaly](sensor_display_1602.jpg)
 
 This example renders the sensor values provided by autodetected I2C sensors
 on a display attached to the Raspberry Pi.
