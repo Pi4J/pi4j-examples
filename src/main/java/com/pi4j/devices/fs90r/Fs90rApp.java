@@ -68,7 +68,7 @@ public class Fs90rApp {
         commandHandler.configuration(
             "c",
             "Set the PWM channel number",
-            new IntegerParameter(0, 127),
+            new IntegerParameter(1, 4),
             PWM_CHANNEL);
 
 
@@ -76,11 +76,12 @@ public class Fs90rApp {
         // after instantiation used on the command line (low value).
 
         commandHandler.parameterizedAction("low", "Minimal pulse width", new DoubleParameter(500.0, 1500.0), (device, param) -> {
-            device.setPwCwMin(param);
+            device.setPwMin(param);
         });
 
+
         commandHandler.parameterizedAction("high", "Maximum pulse width", new DoubleParameter(1500.0, 2500.0), (device, param) -> {
-            device.setPwCcwMax(param);
+            device.setPwMax(param);
         });
 
         commandHandler.parameterizedAction("cw", "clockwise rotation percentage",  new DoubleParameter(0.0, 100.0),   (device, param) -> {
