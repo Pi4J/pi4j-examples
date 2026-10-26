@@ -10,7 +10,10 @@ import com.pi4j.Pi4J;
 import com.pi4j.boardinfo.util.PwmChipUtil;
 import com.pi4j.context.Context;
 import com.pi4j.drivers.motor.fs90r.Fs90rDriver;
-import com.pi4j.examples.utils.commandhandler.*;
+import com.pi4j.examples.utils.commandhandler.DeviceCommandHandler;
+import com.pi4j.examples.utils.commandhandler.DoubleParameter;
+import com.pi4j.examples.utils.commandhandler.IntegerParameter;
+import com.pi4j.examples.utils.commandhandler.StringParameter;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
 import com.pi4j.util.Console;
@@ -63,14 +66,12 @@ public class Fs90rApp {
                 .chip(PwmChipUtil.getPWMChip())
                 .frequency(Fs90rDriver.PWM_FREQUENCY))));
 
-
         // -cw -ccw -degree mutually exclusive
         commandHandler.configuration(
             "c",
             "Set the PWM channel number",
             new IntegerParameter(1, 4),
             PWM_CHANNEL);
-
 
         // Following qctions can be used as arguments when first invoking this program (-low value) , or
         // after instantiation used on the command line (low value).
@@ -84,19 +85,28 @@ public class Fs90rApp {
             device.setPwMax(param);
         });
 
-        commandHandler.parameterizedAction("cw", "clockwise rotation percentage",  new DoubleParameter(0.0, 100.0),   (device, param) -> {
-            device.setServoRotationCwByPercent(param);
+        commandHandler.parameterizedAction("percent", "set rotation by percentage of max", new DoubleParameter(0.0, 100.0), (device, param) -> {
+            device.setServoRotationByPercent(param);
         });
 
-        commandHandler.parameterizedAction("ccw", "counter clockwise rotation percentage", new DoubleParameter(0.0, 100.0), (device, param) -> {
-            device.setServoRotationCCwByPercent(param);
+        commandHandler.parameterizedAction("direction", "set rotation direction", new StringParameter("cw", "ccw"), (device, param) -> {
+            if (param.equals("cw")) {
+                device.setRotationDirection(Fs90rDriver.ServoDirection.CW);
+            } else {
+                device.setRotationDirection(Fs90rDriver.ServoDirection.CCW);
+            }
         });
 
+
+        /* Setting rotation direction by degree assumes the user understands the spec
+         * as it does NOT test the servo being stopped nor that the degree range
+         *   coincides with the present direction of rotation.
+         */
         commandHandler.parameterizedAction("degree", "rotation degree", new DoubleParameter(0.0, 180.0), (device, param) -> {
             device.setServoRotationByDegree(param);
         });
 
-        commandHandler.parameterizedAction("", "-cw -ccw -degree mutually exclusive", new StringParameter("",""), (device, param) -> {
+        commandHandler.parameterizedAction("", "-cw -ccw -degree mutually exclusive", new StringParameter("", ""), (device, param) -> {
         });
 
         commandHandler.process(args);
@@ -105,7 +115,6 @@ public class Fs90rApp {
         pi4j.shutdown();
 
     }
-
 
 }
 
