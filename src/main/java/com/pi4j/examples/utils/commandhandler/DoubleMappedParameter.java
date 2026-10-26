@@ -1,6 +1,8 @@
 package com.pi4j.examples.utils.commandhandler;
 
-public class DoubleMappedParameter extends ParameterSpecification<Double>{}{} {
+public class DoubleMappedParameter extends ParameterSpecification<Double>{
+
+
 
 
     // Define the data structure

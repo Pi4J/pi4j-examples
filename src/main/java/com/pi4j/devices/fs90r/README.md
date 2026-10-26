@@ -50,7 +50,7 @@ Yellow              GPIO18  config.sys contains dtoverlay=pwm-2chan
 -ccw    counter-clockwise S M F
 -low    double pulse width for 0 degree microseconds
 -high   double pulse width for 180 degree microseconds
--q      quit      servo will stop
+-x      quit      servo will stop
 
 
 Application running, awaiting input of 0-180 degree
