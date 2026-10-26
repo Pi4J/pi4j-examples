@@ -11,6 +11,9 @@ public class DoubleParameter extends ParameterSpecification<Double> {
         if( !Double.isFinite(max) ) {
             throw new IllegalArgumentException("Value " + max);
         }
+        if( min >= max ) {
+            throw new IllegalArgumentException("min is NOT less than max");
+        }
         this.min = min;
         this.max = max;
     }
@@ -19,12 +22,12 @@ public class DoubleParameter extends ParameterSpecification<Double> {
     Double process(String text) {
         double parsed = Double.parseDouble(text);
         if (parsed < min || parsed > max) {
-            throw new IllegalArgumentException("Value " + text);
+            throw new IllegalArgumentException("Value " + text + " Valid range  " + Double.toString(min) + " ... " + Double.toString(max) );
         }
         return parsed;
     }
 
     public String toString() {
-        return "[" + min + ".." + max + "] / [0x" + Double.toHexString(min) + "..0x" + Double.toHexString(max) + "]";
+        return "[" + min + ".." + max + "] / [" + Double.toString(min) + ".." + Double.toString(max) + "]";
     }
 }

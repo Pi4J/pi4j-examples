@@ -34,6 +34,7 @@ import com.pi4j.util.Delay;
  */
 public class Fs90rApp {
     private static final int SERVO_NUMBER = 1;
+    private static final int PWM_CHANNEL = 2;
     private static Console console;
     private static final Delay delay = new Delay();
     private static java.util.Scanner scanner;
@@ -71,7 +72,7 @@ public class Fs90rApp {
                 .name("fs90R number " + SERVO_NUMBER)
                 .pwmType(PwmType.HARDWARE)
                 .chip(PwmChipUtil.getPWMChip())
-                .frequency(Fs90rDriver.DEFAULT_PWM_FREQUENCY))));
+                .frequency(Fs90rDriver.PWM_FREQUENCY))));
 
 
         // -cw -ccw -d mutually exclusive
@@ -79,7 +80,7 @@ public class Fs90rApp {
             "c",
             "Set the PWM channel number",
             new IntegerParameter(0, 127),
-            Fs90rDriver.DEFAULT_CHANNEL_NUMBER);
+            PWM_CHANNEL);
 
         commandHandler.configuration(
             "low",
@@ -123,27 +124,37 @@ public class Fs90rApp {
             new DoubleMappedParameter(rangesCcw),
             90.0);
 
-        // TODO  I couldn't see how to get the -d -cw or -ccw argument value
+
+ // TODO  compiles.
+        // 1.  How to pull the value from settings   I want the value from say -cw to be used. I could obtain the value
+        // first and call something similar to this passing in the double.
+        //  2. How to call directly, from interactive data passing the new double value
+        // appears setting this label as default it is not invoked
+        commandHandler.parameterizedAction("setDegree", "Set servo degree",  new DoubleParameter(0.0, 180), (device, pt) -> {
+            device.setServoRotation(pt);  // set to allow testing
+            System.out.println("Servo degree set to : " + pt);
+        });
+
+
+
+
         commandHandler.action("degree", "Set servo motor to this degree (default)", device -> {
             device.setServoRotation((double) 180.0);  // set to allow testing
             System.out.println("Servo degree set to : " + "???");
         });
 
 
-        //  I prefer to handle this in code rather than only documentation.  low prioroty I can worry about ;ater
+        //  I prefer to handle this in code rather than only documentation.  low priority I can worry about later
         if (onlyOne > 1) {
             console.println(" mutually exclusive parms used.");
             console.println(helpString);
             System.exit(44);
         }
 
-        commandHandler.setDefault("degree");
+        commandHandler.setDefault("setDegree");
 
         commandHandler.process(args);
 
-
-        // TODO how to force the action "degree"
- //        commandHandler.configu..process("degree");
 
 
         waitChange(10L);
@@ -164,7 +175,8 @@ public class Fs90rApp {
                 if ((!Double.isFinite(nextDegree) || nextDegree < 0) || (nextDegree > 180)) {
                     console.println(" degree must be in the range 0..180. 90 stop, 0..89 CW, 91..180 CCW");
                 } else {
-                    // TODO  this will require on the fly changing an action value
+                    // TODO  this will require on the fly changing an action value . This was
+                    // mentioned in the earlier TODO
                    //   this no longer used, left as a Note  fs90R.setServoRotation(nextDegree);
                 }
             } else {
