@@ -9,7 +9,6 @@ import com.pi4j.util.Console;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Properties;
 
 /**
  * <p>MonitorInterrupt class.</p>
