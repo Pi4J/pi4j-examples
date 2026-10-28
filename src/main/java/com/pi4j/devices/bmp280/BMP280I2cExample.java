@@ -55,6 +55,8 @@ public class BMP280I2cExample {
             System.out.println("Humidity: " + FORMAT.format(measurement.getHumidity()) + " %");
         });
 
+
+
         commandHandler.setDefault("r");
         commandHandler.process(args);
 
