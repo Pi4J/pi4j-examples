@@ -18,8 +18,8 @@ Each example device has a README with build and usage documentation.
 
 These examples demonstrate various aspects of the Pi4J core and driver libraries:
 
-- [IO Expanders](src/main/java/com/pi4j/examples/ioexpander/): Using IO Expanders for more output options 
-- [I2C Sensor Autodetect Program](src/main/java/com/pi4j/examples/sensor/autodetect/)
+- [IO Expanders](src/main/java/com/pi4j/examples/ioexpander/): Using IO expanders for more output options 
+- [Sensors](src/main/java/com/pi4j/examples/sensor/): Using sensors (including a small HomeAssistant connection)
 
 ## Device Examples
 

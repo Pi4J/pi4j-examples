@@ -1,37 +1,26 @@
-/*
- *  /*
- *  *
- *
- */
-
 package com.pi4j.examples.utils.commandhandler;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class StringParameter extends ParameterSpecification<String> {
+/** A string parameter that can take any value or a specific set of values. */
+public class StringParameter  extends ParameterSpecification<String> {
+    private List<String> permittedValues;
 
-    String[] allowedValues = {"s", "m", "f"};
-
-    /** If empty, we accept any string */
-    public StringParameter(String... allowedValues) {
-        this.allowedValues = allowedValues;
+    public StringParameter(String... permittedValues) {
+        this.permittedValues = Arrays.asList(permittedValues);
     }
 
     @Override
     String process(String value) {
-        if (Arrays.asList(allowedValues).contains(value)) {
+        if (permittedValues.isEmpty() || permittedValues.contains(value)) {
             return value;
-        } else {
-            throw new IllegalArgumentException("Value " + value);
         }
+        throw new IllegalArgumentException("Invalid value: " + value + "; permitted values: " + permittedValues);
     }
 
     @Override
     public String toString() {
-        String options = "";
-        for(String allowedValues  : allowedValues){
-            options+= allowedValues;
-        }
-        return "Permissible options [" + options + "] ";
+        return permittedValues.isEmpty() ? "(string)" : permittedValues.toString();
     }
 }

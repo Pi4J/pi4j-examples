@@ -2,7 +2,14 @@
 
 This program scans the I2C bus for supported sensors and prints their measurements.
 
-Example output for the Raspberry SenseHat:
+## Hardware setup
+
+Connect any available I2C sensor(s) to RPI bus 1 (Pins 1-3 for power, SDA and SCL and pin 6 for Ground). 
+
+## Example output
+
+When running Autodetect.java with a Pi Sense Hat, the output should look similar to
+this example:
 
 ```
 Sensor: Hts221Driver

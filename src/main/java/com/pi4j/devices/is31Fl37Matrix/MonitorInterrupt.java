@@ -9,7 +9,6 @@ import com.pi4j.util.Console;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Properties;
 
 /**
  * <p>MonitorInterrupt class.</p>
@@ -90,12 +89,7 @@ public class MonitorInterrupt {
             }
         }
 
-        // create a properties map with ".address" and ".shutdown" properties for the digital output configuration
-        Properties properties = new Properties();
-        properties.put("id", "GPIO monitor");
-        properties.put("address", monitorPinNum);
-        properties.put("pull", pullDirection);
-        properties.put("name", "GPIO-MONITOR");
+
 
         // create a digital input instance using the default digital input provider
         // we will use the PULL_DOWN argument to set the pin pull-down resistance on this GPIO pin
