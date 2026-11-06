@@ -95,8 +95,7 @@ public class MonitorInterrupt {
         // we will use the PULL_DOWN argument to set the pin pull-down resistance on this GPIO pin
         var config = DigitalInput.newConfigBuilder(pi4j)
             .id("GPIO monitor")
-            .name("GPIO-MONITOR")
-            .address(monitorPinNum)
+            .bcm(monitorPinNum)
             .pull(pd)
             .name("GPIO-MONITOR")
             .build();

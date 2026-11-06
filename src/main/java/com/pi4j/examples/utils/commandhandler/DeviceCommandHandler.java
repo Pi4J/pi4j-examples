@@ -27,9 +27,9 @@ public class DeviceCommandHandler<T> {
 
     public DeviceCommandHandler(Function<Map<String, Object>, T> deviceFactory) {
         this.deviceFactory = deviceFactory;
-        utility("h", "Display this help text", () -> printHelp(System.out));
+        utility("help", "Display this help text", () -> printHelp(System.out));
         utility("-", "Read commands from stdin",  () -> consumeStdin = true);
-        utility("x", "Exit", () -> exit = true);
+        utility("exit", "Exit", () -> exit = true);
     }
 
     private <P> DeviceCommandHandler<T> register(CommandType type, String label, String description, ParameterSpecification<P> paramSpec, BiConsumer<T, P> action) {
