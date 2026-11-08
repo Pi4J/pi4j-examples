@@ -18,23 +18,48 @@ I2C
 1. ./mvnw clean package
 2. cd target/distribution
 3. sudo ./runBMP280I2C.sh
-   Args if bus and or address must be set
-   -b 0x01 -a 0x77
+   Args    
+       -bus  
+       -address  
+       -       application will start and wait for input   
+
+   sudo ./runBMP280I2C.sh -bus 1 -address 0x77   -              ( or -address 119)
+ 
+Commands
+| Input   |                               |
+|---------|-------------------------------|
+| read    | read sensor and print results |
+| help    | display help text              |
+| exit    | program exit                  |
+| reset   | reset chip                    |
+
 
 The SPI connection per the Datasheet supports MODE0 or MODE3.
 
 SPI 
 1. ./mvnw clean package
 2. cd target/distribution
-3. sudo ./runBMP280SPI.sh
+3. sudo ./runBMP280SPI.sh  args
+
+  Args 
+    -chipselect 
+    -bus    0..6
+    -       application will start and wait for input
 
 
+sudo ./runBMP280SPI.sh -bus 0 -chipselect 0   -              ( or -address 119)
 
-Will create the BMP280 device to create a BMP280Device instance Call the various temperature and pressure methods
+Commands
+| Input   |                               |
+|---------|-------------------------------|
+| read    | read sensor and print results |
+| help    | display help text              |
+| exit    | program exit                  |
+| reset   | reset chip                    |
+
+Will create the BMP280 device driver then Call the various temperature and pressure methods
 defined in the interface. 
 
-No parameters are required. However, if 'any' parameter value is to be supplied:
-parms: -b hex value bus -a hex value address 
 
 The file BMP280.pdf documents a method of connecting an Adafruit BMP280 to a Pi.
 

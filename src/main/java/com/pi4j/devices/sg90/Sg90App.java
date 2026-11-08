@@ -116,7 +116,7 @@ class Sg90App {
                 if ((nextDegree < 0.0) || (nextDegree > 180.0)) {
                     console.println("  degree must be in the range 0..180");
                 } else {
-                    sg90.setServoAngle(nextDegree);
+                    sg90.setAngle(nextDegree);
                 }
             } else {
                 break;
