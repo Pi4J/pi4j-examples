@@ -3,10 +3,7 @@ package com.pi4j.examples.sensor.homeassistant;
 import javafx.util.Pair;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,16 +25,16 @@ public class TinyWebServer implements Runnable {
     /** Returns the URL of this server as a String */
     public String getUrl() {
         try (Socket socket = new Socket()) {
-            // Get our own address, see https://stackoverflow.com/a/41822127/1401879
-            socket.connect(new InetSocketAddress("google.com", 80));
-            InetAddress address = socket.getLocalAddress();
-            String host;
+
+            String hostName;
             try {
-                host = address.getHostName();
-            } catch (Exception e) {
-                host = address.toString();
+                hostName = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                // Get our own address, see https://stackoverflow.com/a/41822127/1401879
+                socket.connect(new InetSocketAddress("google.com", 80));
+                hostName = socket.getLocalAddress().toString();
             }
-            return "http:/" + host + ":" + port;
+            return "http://" + hostName + ":" + port;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
