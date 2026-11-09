@@ -58,7 +58,13 @@ This help text:        http://192.168.178.197:8147
 ## Home Assistant Integration
 
 To integrate the server with Home Assistant, you can use the configuration snippet provided by the server. 
-View the URL from the "configuration snippet" line in a browser and paste the content it into your 
-Home Assistant configuration file. 
 
-This will allow Home Assistant to connect to the server and retrieve sensor data.
+View the URL from the "configuration snippet" line in a browser and paste the content it into your 
+Home Assistant `config.yaml` file in the `rest:` section (which might need to be added if it does not exist already). 
+
+This will allow Home Assistant to connect to the server and retrieve sensor data. A rest integraton should
+appear automatically in Home Assistant, and it should provide a debug logging option, which comes quite
+handy if anything goes wrong.
+
+Unfortunately, resolving host names in the local network seemed unreliable in HomeAssistant. It's probably best to
+assign a fixed IP address locally or in the router, so this won't change after a reboot.
