@@ -20,7 +20,8 @@ The example code consists of the following files:
 - SensorServer.java: Provides sensor values in JSON format (compatible with HomeAssistant) via a tiny
   HTTP server
 
-- SensorServer2004App.java: Additionally renders the values on a 20x4 LCD 
+- SensorServer2004App.java: Additionally renders the values on a 20x4 LCD (it should be straight forward to adapt this 
+  code to use a different display)
 
 - TinyWebServer: A tiny utility implementing a server socket HomeAssitant can connect to.
 
@@ -29,8 +30,14 @@ The example code consists of the following files:
 If not already done, please follow the general example setup instructions in 
 the [main README](../../../../../../../../README.md#setup) file.
 
-After these steps, the server can be started from the pi4j-examples directory unsing the following maven
+After these steps, a headless server can be started from the pi4j-examples directory unsing the following maven
 command:
+
+```
+mvn exec:java -Dexec.mainClass="com.pi4j.examples.sensor.homeassistant.SensorServer"
+```
+
+Alternatively, connect a 20x4 LCD to the Pi4J I2C bus and start the server with the following command:
 
 ```
 mvn exec:java -Dexec.mainClass="com.pi4j.examples.sensor.homeassistant.SensorServer2004App"
@@ -54,6 +61,10 @@ Measurements:          http://192.168.178.197:8147/measurements
 
 This help text:        http://192.168.178.197:8147
 ```
+
+The "2004" server will additionally render the sensor values on a 20x4 LCD, as shown in the image below.
+
+![Pi4 sensor data display](sensor_display_2004.jpg)
 
 ## Home Assistant Integration
 
