@@ -24,17 +24,13 @@ public class TinyWebServer implements Runnable {
 
     /** Returns the URL of this server as a String */
     public String getUrl() {
+        // This was recommended on stack overflow to get the local IP.
+        // Unfortunately, resolving host names in the local network seemed to be
+        // unreliable in HomeAssistant. It's probably best to assign a fixed IP
+        // address locally or in the router, so this won't change after a reboot.
         try (Socket socket = new Socket()) {
-
-            String hostName;
-            try {
-                hostName = InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                // Get our own address, see https://stackoverflow.com/a/41822127/1401879
-                socket.connect(new InetSocketAddress("google.com", 80));
-                hostName = socket.getLocalAddress().toString();
-            }
-            return "http://" + hostName + ":" + port;
+            socket.connect(new InetSocketAddress("google.com", 80));
+            return "http://" + socket.getLocalAddress() + ":" + port;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -7,6 +7,8 @@ import com.pi4j.drivers.sensor.SensorDescriptor;
 import com.pi4j.examples.sensor.display.SensorAggregator;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class SensorServer {
@@ -17,6 +19,7 @@ public class SensorServer {
     private final SensorAggregator sensorAggregator;
     private final int httpPort;
     private final Object lock = new Object();
+    private String namePrefix;
 
     private Map<SensorDescriptor.Kind, Double> currentReadings;
     private String address;
@@ -24,6 +27,12 @@ public class SensorServer {
     public SensorServer(SensorAggregator sensorAggregator, int httpPort) {
         this.sensorAggregator = sensorAggregator;
         this.httpPort = httpPort;
+
+        try {
+            namePrefix = Files.readString(Path.of("/etc/hostname")).trim();
+        } catch (IOException e) {
+            namePrefix = "pi4j_sensor_server";
+        }
 
         System.out.println("Sensors found:");
         System.out.println(sensorAggregator.getSensorList());
@@ -34,7 +43,7 @@ public class SensorServer {
 
         System.out.println("Reading initial sensor values...");
         currentReadings = sensorAggregator.readAveragedMeasurements();
-        System.out.println("Initial sensor values aquired: " + currentReadings);
+        System.out.println("Initial sensor values acquired: " + currentReadings);
         System.out.println();
     }
 
@@ -93,12 +102,12 @@ public class SensorServer {
         out.println("# Add this snippet to the 'rest:' section in your HomeAssistant config.yaml:");
         out.println("# rest:");
         out.println("  - resource: \"" + address +"/measurements\"");
-        out.println("    sensor:\n");
+        out.println("    sensor:");
         synchronized (lock) {
             for (SensorDescriptor.Kind kind: currentReadings.keySet()) {
                 String deviceClass = getHomeAssistantDeviceClass(kind);
                 if (deviceClass != null) {
-                    out.println("      - name: \"" + kind + '"');
+                    out.println("      - name: \"" + namePrefix + "_" + kind + '"');
                     out.println("        value_template: \"{{ value_json['" + kind + "'] }}\"");
                     out.println("        device_class: " + deviceClass);
                     out.println("        unit_of_measurement: \"" + kind.measurementUnit + '"');
@@ -112,15 +121,17 @@ public class SensorServer {
         out.println();
         out.println("HomeAssistant YAML");
         out.println("configuration snippet: " + address + "/config");
-        out.println("Measurements:          " + address + "/measurements\n");
+        out.println("Measurements:          " + address + "/measurements");
+        out.println();
         out.println("This help text:        " + address);
     }
 
     /** Returns the home assistant device class for the given sensor kind. */
     static String getHomeAssistantDeviceClass(SensorDescriptor.Kind kind) {
         return switch(kind) {
+            case CO2 -> "carbon_dioxide";
             case LIGHT, LIGHT_BLUE, LIGHT_RED, LIGHT_GREEN -> "illuminance";
-            case CO2, DISTANCE, HUMIDITY, PRESSURE, TEMPERATURE -> kind.toString();
+            case DISTANCE, HUMIDITY, PRESSURE, TEMPERATURE -> kind.toString();
             default -> null;
         };
     }
