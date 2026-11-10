@@ -3,9 +3,7 @@ package com.pi4j.examples.sensor.homeassistant;
 import javafx.util.Pair;
 
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,10 +24,12 @@ public class TinyWebServer implements Runnable {
 
     /** Returns the URL of this server as a String */
     public String getUrl() {
+        // This was recommended on stack overflow to get the local IP. Unfortunately, resolving host names in the local
+        // network seemed unreliable in HomeAssistant. It's probably best to assign a fixed IP address locally or in
+        // the router, so this won't change after a reboot.
         try (Socket socket = new Socket()) {
-            // Get our own address, see https://stackoverflow.com/a/41822127/1401879
             socket.connect(new InetSocketAddress("google.com", 80));
-            return "http:/" + socket.getLocalAddress() + ":" + port;
+            return "http://" + socket.getLocalAddress() + ":" + port;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
