@@ -5,7 +5,7 @@ auto-detected I2C sensors as a simple JSON object.
 
 ## Hardware Setup
 
-Connect any available I2C sensor(s) and a HD44780+PCF8574 based 20x4 LCD to I2C bus 1
+Connect any available I2C sensor(s) and an optional HD44780+PCF8574 based 20x4 LCD to I2C bus 1
 (Pins 1-3 for power, SDA and SCL and pin 6 for Ground), as shown in the picture below.
 
 ![Pi4 wired up to a breadboard with a BME280, SCP42 and 2004 LCD](sensor_wireup_2004.jpg)
@@ -113,10 +113,11 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-# Run as the 'pi' user and include GPIO/hardware access groups
+# Run as the 'pi' user and include GPIO/hardware access groups --
+# this needs to be adjusted based on your user and group setup if you don't use the default 'pi' user name.
 User=pi
 Group=pi
-SupplementaryGroups=gpio i2c spi
+SupplementaryGroups=gpio i2c
 
 # Project directory containing pom.xml -- adjust to your local setup
 WorkingDirectory=/home/pi/src/pi4j-examples
