@@ -5,7 +5,7 @@ auto-detected I2C sensors as a simple JSON object.
 
 ## Hardware Setup
 
-Connect any available I2C sensor(s) and a HD44780+PCF8574 based 20x4 LCD to I2C bus 1
+Connect any available I2C sensor(s) and an optional HD44780+PCF8574 based 20x4 LCD to I2C bus 1
 (Pins 1-3 for power, SDA and SCL and pin 6 for Ground), as shown in the picture below.
 
 ![Pi4 wired up to a breadboard with a BME280, SCP42 and 2004 LCD](sensor_wireup_2004.jpg)
@@ -66,6 +66,7 @@ The "2004" server will additionally render the sensor values on a 20x4 LCD, as s
 
 ![Pi4 sensor data display](sensor_display_2004.jpg)
 
+
 ## Home Assistant Integration
 
 To integrate the server with Home Assistant, you can use the configuration snippet provided by the server. 
@@ -79,3 +80,78 @@ handy if anything goes wrong.
 
 Unfortunately, resolving host names in the local network seemed unreliable in HomeAssistant. It's probably best to
 assign a fixed IP address locally or in the router, so this won't change after a reboot.
+
+
+## Service Registration
+
+You can run your Pi4J Sensor Server as a background daemon on your Raspberry Pi by creating a
+custom systemd service file. Because Pi4J interacts with GPIO hardware pins, you should 
+ensure the service user has hardware permissions or runs with appropriate privileges.
+
+### Step 1: Verify your maven path
+
+```
+which mvn
+```
+This usually outputs /usr/bin/mvn (used in the configuration below). 
+If yours shows a different path, update the ExecStart line accordingly.
+
+### Step 2: Create the systemd Service File
+
+Create a new service file named sensor-server.service:
+
+```
+sudo nano /etc/systemd/system/sensor-server.service
+```
+
+Paste the following configuration into the file:
+
+```
+[Unit]
+Description=Pi4J Home Assistant Sensor Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Run as the 'pi' user and include GPIO/hardware access groups --
+# this needs to be adjusted based on your user and group setup if you don't use the default 'pi' user name.
+User=pi
+Group=pi
+SupplementaryGroups=gpio i2c
+
+# Project directory containing pom.xml -- adjust to your local setup
+WorkingDirectory=/home/pi/src/pi4j-examples
+
+# Exact Maven execution command
+ExecStart=/usr/bin/mvn exec:java -Dexec.mainClass="com.pi4j.examples.sensor.homeassistant.SensorServer2004App"
+
+# Restart automatically if the sensor server crashes
+Restart=always
+RestartSec=10
+
+# Log output to systemd journal
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Save and exit the editor (Ctrl + O, Enter, then Ctrl + X).
+
+
+### Step 3: Enable and Start the Daemon
+
+Reload systemd, start your server immediately, and set it to launch automatically 
+whenever the Raspberry Pi boots:
+
+```
+# Reload systemd to recognize the new service
+sudo systemctl daemon-reload
+
+# Start the sensor server now
+sudo systemctl start sensor-server
+
+# Enable automatic startup on boot
+sudo systemctl enable sensor-server
+```
